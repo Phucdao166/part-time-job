@@ -1,0 +1,121 @@
+.register{
+    text-align: center;
+
+    &-form{
+        display: flex;
+    }
+}
+#accept1{
+    width: 500px;
+    height: 20px;
+    font-family: Open Sans;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: rgba(3, 159, 34, 0.612);
+    translate: 3px -13px;
+}
+#require-icon {
+    width: 6px;
+    height: 6px;
+    translate: 2px -9px;
+}
+#type-register{
+    translate: 10px -60px;
+}
+#inputs {
+    max-width: 550px;
+    width: 550px;
+    height: 70px;
+    border-radius: 6px;
+    gap: 8px;
+    margin-bottom: 10px;
+    border: #e2e6eb84 1px solid;
+    outline: none;
+    padding: 15px;
+    background: #1618230f;
+
+    &:hover {
+        background-color: #e2e6eb84;
+    }
+}
+
+#title {
+    width: 300px;
+    height: 20px;
+    font-family: Open Sans;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: linear-gradient(0deg, #000000, #000000),
+        linear-gradient(0deg, #FF0000, #FF0000);
+}
+
+.sex {
+    font-family: Open Sans;
+    font-size: 17px;
+    color: #000;
+}
+
+#sex{
+    margin: 10px;
+}
+
+#eye{
+    translate: -15px -40px;
+    float: right;
+}
+
+.btn-register{
+    text-align: center;
+}
+
+#re-login{
+    width: 215px;
+    height: 20px;
+    font-family: Open Sans;
+    font-size: 20px;
+    translate: 540px 10px;
+    color: #000000;
+    text-align: center;
+
+    & a{
+        width: 340px;
+        height: 13px;
+        color: #66BC46;
+        text-decoration: none;
+    }
+    
+}
+
+#role{
+    height: 418px;
+    text-align: center;
+}
+
+#btn-role{
+    padding: 50px;
+    margin: 70px 20px;
+    font-size: 30px;
+}
+
+.role-choose{
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.back-login{
+    font-size: 20px;
+    font-weight: bold;
+    translate: 0 -40px;
+
+    & a{
+        text-decoration: none;
+    }
+}
+

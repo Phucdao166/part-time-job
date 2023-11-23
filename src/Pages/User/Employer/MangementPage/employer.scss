@@ -1,0 +1,239 @@
+.employer-page {
+    display: flex;
+    flex-wrap: wrap;
+
+    &-sidebar {
+        margin-top: 85px;
+        width: 20%;
+    }
+
+    &-content {
+        width: 80%;
+        min-height: 650px;
+        margin-top: 85px;
+        background-color: var(--light-green);
+
+        &-info {
+            display: flex;
+            width: 90%;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 20px;
+            margin-top: 20px;
+            padding: 10px;
+
+            &-name {
+                font-size: 30px;
+                font-weight: bold;
+                margin: 15px 25px;
+            }
+        }
+
+        &-recruitment {
+            display: flex;
+            width: 90%;
+            flex-wrap: wrap;
+            margin: auto;
+            margin-top: 30px;
+
+
+            &-left {
+                width: 40%;
+                display: flex;
+                flex-wrap: wrap;
+
+
+                &-item {
+                    &-1 {
+                        display: flex;
+                        width: 48%;
+                        margin: auto;
+                        margin-bottom: 10px;
+                        background-color: #ffe8fb;
+                        border-radius: 20px;
+                        padding: 20px;
+                    }
+
+                    &-2 {
+                        display: flex;
+                        width: 48%;
+                        margin: auto;
+                        margin-bottom: 10px;
+                        background-color: #fff2ec;
+                        border-radius: 20px;
+                        padding: 20px;
+                    }
+
+                    &-time {
+                        width: 70%;
+                    }
+
+                    &-quantity {
+                        width: 70%;
+                    }
+                }
+
+
+            }
+
+            &-right {
+                width: 59%;
+                height: 205px;
+                background-color: #fff;
+                border-radius: 20px;
+                padding: 20px;
+                margin-left: 10px;
+                display: flex;
+
+                &-notify {
+                    width: 50%;
+
+                    &-title{
+                        font-weight: bold;
+                        font-size: 20px;
+                    }
+                }
+
+                &-care {
+                    width: 50%;
+                }
+            }
+        }
+
+        &-choice {
+            width: 90%;
+            margin: auto;
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 20px;
+
+            &-item {
+                width: 20%;
+                margin: auto;
+                translate: 30px;
+
+                &-title {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin-left: 5px;
+                    margin-top: 10px;
+                }
+            }
+        }
+    }
+
+}
+
+#choice-icon {
+    &-1 {
+        background-color: rgb(248 239 228);
+        color: rgb(255 166 3);
+        font-size: 55px;
+        translate: 25px;
+        padding: 20px;
+        border-radius: 20px;
+        align-items: center;
+    }
+
+    &-2 {
+        background-color: rgb(233 255 231);
+        color: #0bd50b;
+        font-size: 55px;
+        translate: 25px;
+        padding: 20px;
+        border-radius: 20px;
+        align-items: center;
+    }
+
+    &-3 {
+        background-color: rgb(251 232 253);
+        color: #a759ef;
+        font-size: 55px;
+        translate: 25px;
+        padding: 20px;
+        border-radius: 20px;
+        align-items: center;
+    }
+
+    &-4 {
+        background-color: rgb(222 222 255);
+        color: #7979ff;
+        font-size: 55px;
+        translate: 25px;
+        padding: 20px;
+        border-radius: 20px;
+        align-items: center;
+    }
+}
+
+#sidebar-item {
+    font-size: 20px;
+    margin-bottom: 30px;
+    width: 300px;
+}
+
+#icon-employer-managerment {
+    font-size: 21px;
+    padding: 10px;
+    color: #d862d8;
+    background-color: #efc9ef;
+    border-radius: 50px;
+    translate: 0px 15px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 85px;
+    left: 0;
+    height: 100vh;
+    width: 20%;
+    background-color: #fff;
+
+    &__menu {
+        position: relative;
+        margin-top: 10px;
+
+        &__item {
+            display: flex;
+            align-items: center;
+            place-content: flex-start;
+            padding: 1rem 3rem;
+            font-size: 16px;
+            font-weight: 500;
+            color: #555555;
+            // transition: color 0.1s ease-in-out;
+
+            &__text a{
+                text-decoration: none;
+            }
+
+            &.active {
+                color: #fff;
+                font-weight: bold;
+            }
+
+            &__icon {
+                margin-right: 1rem;
+
+                i {
+                    font-size: 1.75rem;
+                }
+            }
+        }
+
+        &__indicator {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: calc(100% - 40px);
+            border-radius: 10px;
+            background-color: #0bd50b;
+            z-index: -1;
+            transform: translateX(-50%);
+            // transition: color 0.1s ease-in-out;
+        }
+    }
+}
