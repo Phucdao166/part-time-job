@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Footer from "../Themes/Footer/footer";
-import HeaderEmployer from "../Themes/Header/header";
+import HeaderEmployer from "../Themes/Header/headerEmployer";
 import "./profile.scss";
 import { ChangePassword } from '../../../Service/userService';
 import { useNavigate } from 'react-router-dom';
@@ -8,13 +8,13 @@ import { ToastContainer,toast } from 'react-toastify';
 
 function ChangePassEmp() {
   const navigate = useNavigate();
-  let id = sessionStorage.getItem('idOfEmp');
+  let id = parseInt(sessionStorage.getItem('idOfEmp'),10);
   const [MessageError, setMessageError] = useState('');
   const [formInput, setFormInput] = useState({
+    accountId:id,
     oldpassword: "",
     newpassword: "",
-    repassword: "",
-    accountId:id
+    repassword: ""
   });
 
   const handleUserInput = (name, value) => {
@@ -26,7 +26,7 @@ function ChangePassEmp() {
 
   const validateFormInput = async (event) => {
     event.preventDefault();
-    
+    console.log("ChangePassword",formInput);
     let res = await ChangePassword(formInput);
     console.log(res);
         if(res && res.message==="successfull"){

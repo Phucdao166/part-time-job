@@ -1,5 +1,6 @@
 .job-detail {
     display: flex;
+    font-family: Open Sans;
 
     &-left {
         width: 70%;
@@ -29,7 +30,7 @@
 
     &-right {
         width: 30%;
-
+        margin-top: 14px;
         border-radius: 20px;
     }
 
@@ -40,14 +41,12 @@
     }
 
     &-content {
-        text-align: center;
-        font-weight: 600;
+        font-weight: 400;
     }
 
     &-left-top-due {
         width: 210px;
         margin: 20px 35px;
-        background-color: #c8dbd4;
         font-size: 20px;
         font-weight: bold;
     }
@@ -55,11 +54,13 @@
     &-comment {
         width: 100%;
         margin-top: 10px;
+        overflow: hidden;
+        overflow-y: scroll;
+        max-height: 235px;
 
         &-new {
             display: flex;
             width: 100%;
-            padding: 15px 30px;
         }
 
         &-post {
@@ -67,7 +68,7 @@
         }
 
         &-avt {
-            width: 5%;
+            width: 15%;
 
             & img {
                 width: 40px;
@@ -81,42 +82,48 @@
     }
 }
 
-.user-comment{
-    &-name{
-        font-weight: bold;
+.user-comment {
+    font-family: Open Sans;
 
-        & span{
+    &-name {
+        font-weight: bold;
+        width: 70%;
+
+        & span {
             color: #b4b2b2;
         }
     }
 
-    &-time{
+    &-time {
         color: #b4b2b2;
     }
 }
 
 .box-create-cmt {
+    font-family: Open Sans;
     width: 100%;
-    border: 1px solid rgb(225, 225, 234);;
+    border: 1px solid rgb(225, 225, 234);
+    ;
 }
 
 .box-view-cmt {
-    margin-top: 20px;
-    border: 1px solid rgb(225, 225, 234);;
+    margin-bottom: 40px;
 }
 
 .view-cmt {
-    font-size: 20px;
-    translate: 90px;
+    font-family: Open Sans;
+    font-size: 17px;
+    margin: 5px 55px;
 }
 
 .cmt-jd {
-    margin-top: 30px;
+    font-family: Open Sans;
     font-size: 30px;
     font-weight: bold;
 }
 
 #input-comment-job-detail {
+    font-family: Open Sans;
     width: 100%;
     padding-bottom: 50px;
     height: 100px;
@@ -135,6 +142,7 @@
 }
 
 .box {
+    font-family: Open Sans;
     width: 95%;
     background-color: #f9f9f9;
     border-radius: 20px;
@@ -142,6 +150,8 @@
 }
 
 #btn {
+    font-family: Open Sans;
+
     &-job-detail {
         margin: 0 20px;
     }
@@ -206,6 +216,7 @@
 }
 
 .content {
+    font-family: Open Sans;
     width: 95%;
     background-color: #f9f9f9;
     border-radius: 20px;
@@ -244,6 +255,8 @@
 }
 
 .job {
+    font-family: Open Sans;
+
     &-relate {
         border-radius: 10px;
         background-color: #fff;
@@ -290,10 +303,10 @@
         }
 
         &-title {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: bold;
-            color: #1285d2;
             margin-right: 20px;
+            min-width: 125px;
         }
 
         &-go-detail {
@@ -412,7 +425,17 @@
 
         &-name {
             font-weight: bold;
-            width: 200px;
+            width: 100%;
+
+            &-relate {
+                font-weight: bold;
+                width: 100%;
+
+                & a {
+                    text-decoration: none;
+                    color: #212f3f;
+                }
+            }
 
             & a {
                 text-decoration: none;
@@ -463,7 +486,7 @@
     }
 
     &-div-homepage {
-        background-color: var(--semi-green);
+        background-image: url("https://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQcc2j7n5qgIyGdb4DPyzyTVz06z4uRi1veUdKSYdIMEKW0r9KHlqJDmon8aIqGu2cvTYNQzLIuQRPoBBAG6wQ");
         border-radius: 14px;
         display: flex;
         flex-direction: column;
@@ -474,6 +497,7 @@
 }
 
 #job {
+
     &-filter {
         width: 300px;
         margin-right: 40px;
@@ -505,6 +529,7 @@
     }
 
     &-list {
+        font-family: Open Sans;
         color: #d2ae12;
         font-size: 20px;
         margin-left: 125px;
@@ -524,6 +549,7 @@
 }
 
 #company-logo {
+    font-family: Open Sans;
     width: 80px;
     height: 80px;
     margin: 15px;
@@ -533,6 +559,8 @@
 }
 
 .infomation {
+    font-family: Open Sans;
+
     &-common {
         background-color: #f9f9f9;
         border-radius: 20px;
@@ -546,13 +574,14 @@
     }
 
     &-content {
-        margin: 3px 105px;
+        margin: 3px 80px;
         font-size: 18px;
-        font-weight: 600;
+        font-weight: 400;
     }
 }
 
 .card {
+    font-family: Open Sans;
 
     & img {
         width: 415px;
@@ -575,6 +604,8 @@
 }
 
 .all-job {
+    font-family: Open Sans;
+
     &-list {
         margin-top: 40px;
 
@@ -610,5 +641,396 @@
 }
 
 #all-job-top-select {
+    font-family: Open Sans;
     width: 200px;
+}
+
+.feedback-emp {
+    font-family: Open Sans;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.btn-relate {
+    translate: 50px 25px;
+}
+
+#vote-employ {
+    width: 30%;
+}
+
+@media only screen and (max-width: 1400px) {
+    #btn-list-save-job {
+        font-size: 25px;
+        color: #9f9d9d;
+        margin: 42px -95px;
+    }
+
+    .job-list-name {
+        font-weight: bold;
+        width: 170px;
+    }
+
+    .job-detail-left-top-item {
+        width: 25%;
+        margin: 0 25px;
+        display: flex;
+    }
+
+    .btn-relate {
+        translate: 15px 25px;
+    }
+
+    #vote-employ {
+        width: 30%;
+        translate: -40px;
+    }
+
+    #btn-apply {
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 10px 200px;
+        border-radius: 20px;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    #btn-list-save-job {
+        font-size: 25px;
+        color: #9f9d9d;
+        margin: 42px -95px;
+    }
+
+    .job-list-name {
+        font-weight: bold;
+        width: 120px;
+    }
+
+    .job-detail-left-top-due {
+        width: 210px;
+        margin: 20px 35px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .job-list-item-left-content {
+        margin-right: 110px;
+        margin-top: 15px;
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .job-detail-left-top-item {
+        width: 26%;
+        margin: 0px 18px;
+        display: flex;
+    }
+
+    .job-detail-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: brown;
+    }
+
+    .job-detail-content {
+        font-weight: 400;
+        font-size: 12px;
+    }
+
+    .job-detail-left-name {
+        font-size: 25px;
+        font-weight: bold;
+        color: red;
+        margin: 10px 20px;
+    }
+
+    #btn-apply {
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 10px 150px;
+        border-radius: 20px;
+    }
+
+    .job-company-title {
+        font-size: 15px;
+        font-weight: bold;
+        margin-right: -28px;
+        min-width: 125px;
+    }
+
+    .job-company-name {
+        font-size: 21px;
+        font-weight: bold;
+        margin: 30px 0px;
+    }
+
+    .infomation-content {
+        margin: 3px 80px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    .infomation-common-title {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .cmt-jd {
+        font-family: Open Sans;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    #vote-employ {
+        width: 32%;
+        font-size: 20px;
+        translate: 25px 5px;
+        margin-bottom: 10px;
+    }
+
+    .user-comment-name {
+        font-weight: bold;
+        width: 70%;
+        translate: 25px;
+    }
+
+    .user-comment-time {
+        color: #b4b2b2;
+        translate: 27px;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    #btn-list-save-job {
+        font-size: 25px;
+        color: #9f9d9d;
+        margin: 42px -95px;
+    }
+
+    .job-list-name {
+        font-weight: bold;
+        width: 120px;
+    }
+
+    .job-list-item-left-content {
+        margin-right: 110px;
+        margin-top: 15px;
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .job-list-detail {
+        border-radius: 10px;
+        background-color: #fff;
+        width: 46%;
+        margin-right: 20px;
+        margin-bottom: 15px;
+        border: 1px solid rgb(225, 225, 234);
+    }
+
+    .job-detail-left-name {
+        font-size: 19px;
+        font-weight: bold;
+        color: red;
+        margin: 10px 20px;
+    }
+
+    #job-detail-icon {
+        background-color: #93e8cc;
+        border-radius: 50px;
+        font-size: 15px;
+        margin: 2px 15px;
+        padding: 7px 5px;
+        width: 25px;
+        height: 30px;
+        text-align: center;
+    }
+
+    .job-detail-left-top-item {
+        width: 28%;
+        margin: 0px 12px;
+        display: flex;
+    }
+
+    .job-detail-title {
+        font-size: 13px;
+        font-weight: bold;
+        color: brown;
+    }
+
+    #btn-apply {
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 10px 70px;
+        border-radius: 20px;
+    }
+
+    .job-list-name-relate {
+        font-weight: bold;
+        width: 145px;
+    }
+
+    .btn-relate {
+        translate: -80px 40px;
+        width: 120px;
+    }
+
+    #company-logo {
+        font-family: Open Sans;
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 5px;
+    }
+
+    .job-company-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0px;
+    }
+
+    .job-company-title {
+        font-size: 13px;
+        font-weight: bold;
+        margin-right: -62px;
+        min-width: 125px;
+    }
+
+    .job-company-address-detail {
+        font-size: 14px;
+        translate: 0px -2px;
+    }
+
+    .infomation-content {
+        margin: 3px 55px;
+        font-size: 10px;
+        font-weight: 400;
+    }
+
+    .user-comment-time {
+        color: #b4b2b2;
+        translate: 27px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #btn-list-save-job {
+        font-size: 25px;
+        color: #9f9d9d;
+        margin: 42px -103px;
+    }
+
+    .job-list-name {
+        font-weight: bold;
+        width: 100px;
+    }
+
+    .job-list-item-left-content {
+        margin-right: 110px;
+        margin-top: 15px;
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .job-list-detail {
+        border-radius: 10px;
+        background-color: #fff;
+        width: 45%;
+        margin-right: 20px;
+        margin-bottom: 15px;
+        border: 1px solid rgb(225, 225, 234);
+    }
+
+    #company-logo {
+        font-family: Open Sans;
+        width: 40px;
+        height: 40px;
+        margin: 0px 5px;
+        background-color: #fff;
+        border-radius: 10px;
+    }
+
+    .job-detail-left-top-item {
+        width: 42%;
+        margin: 0px 10px;
+        display: flex;
+    }
+
+    #btn-apply {
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        border-radius: 20px;
+    }
+
+    #btn-save {
+        padding: 10px 20px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+
+    #btn-save-relate{
+        font-size: 11px;
+    }
+
+    .btn-relate {
+        translate: -63px 50px;
+        width: 120px;
+    }
+
+    .job-company-name {
+        font-size: 12px;
+        font-weight: bold;
+        margin: 10px 0px;
+    }
+
+    .job-company-title {
+        font-size: 10px;
+        font-weight: bold;
+        margin-right: -75px;
+        min-width: 125px;
+    }
+
+    .job-company-address-detail {
+        font-size: 10px;
+    }
+
+    .infomation-common-title {
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .cmt-jd {
+        font-family: Open Sans;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .user-comment-name {
+        font-weight: bold;
+        width: 70%;
+        translate: 25px;
+        font-size: 11px;
+    }
+
+    #vote-employ {
+        width: 32%;
+        font-size: 11px;
+        translate: 25px 5px;
+        margin-bottom: 10px;
+    }
+
+    .user-comment-time {
+        color: #b4b2b2;
+        translate: 27px;
+        font-size: 11px;
+    }
+
+    .view-cmt{
+        font-size: 11px;
+    }
 }

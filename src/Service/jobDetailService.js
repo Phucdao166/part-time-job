@@ -18,8 +18,14 @@ const ViecLamGanBanNhat = (cid) => {
 const ViecLamMoiNhat = () => {
     return axios.get("/JobDetail/ViecLamMoiNhat")
 }
+const NhaTuyendungNoiBat = () => {
+    return axios.get("/Home/NhaTuyendungNoiBat")
+}
 const Xemtatca = (url) => {
     return axios.get(`/JobDetail/${url}`)
 }
+const ListAllJobOfEmployer = (eid) => {
+    return axios.get(`/JobDetail/ListAllJobOfEmployer?eid=${eid}`)
+}
 
-export {Xemtatca,ViecLamSieuCap,ViecLamMoiNhat,ViecLamSinhVien,ViecLamGanBanNhat,ViecLamTotNhat,GetJobFromJobDetailByTypeId}
+export {ListAllJobOfEmployer,NhaTuyendungNoiBat,Xemtatca,ViecLamSieuCap,ViecLamMoiNhat,ViecLamSinhVien,ViecLamGanBanNhat,ViecLamTotNhat,GetJobFromJobDetailByTypeId}

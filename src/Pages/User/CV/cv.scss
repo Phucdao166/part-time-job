@@ -121,7 +121,7 @@
                 translate: 500px 30px;
             }
 
-            &-job{
+            &-job {
                 display: flex;
                 translate: 430px 30px;
             }
@@ -199,4 +199,58 @@
 
 #CV-popup {
     margin-right: 15px;
+}
+
+#cv-info {
+    
+    width: 1090px;
+    margin-top: 10px;
+    display: inline-block;
+
+    &-select {
+        
+        width: 1090px;
+        margin-top: 10px;
+        display: inline-block;
+        background-color: rgb(233, 236, 239);
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 1400px) {
+    #cv-info {
+        
+        width: 900px;
+        margin-top: 10px;
+        display: inline-block;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    #cv-info {
+        
+        width: 715px;
+        margin-top: 10px;
+        display: inline-block;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    #cv-info {
+        
+        width: 480px;
+        margin-top: 10px;
+        display: inline-block;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #cv-info {
+        
+        width: 305px;
+        margin-top: 10px;
+        display: inline-block;
+        font-size: 11px;
+    }
 }

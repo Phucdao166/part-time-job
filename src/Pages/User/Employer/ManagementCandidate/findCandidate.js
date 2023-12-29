@@ -1,10 +1,10 @@
-import Header from "../../Themes/Header/header";
+import HeaderEmployer from "../../Themes/Header/headerEmployer";
 import SideBar from "../MangementPage/sidebar";
 
 function FindCandidate() {
     return (
         <>
-            <Header />
+            <HeaderEmployer />
             <div className="employer-page">
                 <div className="employer-page-sidebar">
                     <SideBar />

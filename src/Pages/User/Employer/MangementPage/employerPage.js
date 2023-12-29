@@ -1,7 +1,7 @@
 import HeaderEmployer from "../../Themes/Header/headerEmployer";
 import SideBar from "./sidebar";
 import { useEffect, useState } from 'react';
-import { tindangtrongtuan, ungvientrongtuan, ungvientrongthang, tindangtrongthang,tindangtuyendung,ungviendaungtuyen } from '../../../../Service/employService';
+import { tindangtrongtuan, ungvientrongtuan, ungvientrongthang, tindangtrongthang, tindangtuyendung, ungviendaungtuyen } from '../../../../Service/employService';
 
 
 function EmployerPage() {
@@ -11,25 +11,30 @@ function EmployerPage() {
     const [tintrongthang, settindangtrongthang] = useState("");
     const [tindadang, settindadang] = useState("");
     const [uvdatuyen, setuvdatuyen] = useState("");
+    const tokenE = localStorage.getItem("tokenE");
+    console.log("localStorage.getItem", tokenE);
     let name = sessionStorage.getItem('fullnameEmp');
     useEffect(() => {
-        // const employid = sessionStorage.getItem("employId");
         fetchData();
-    }, []);
+    }, [tokenE]);
     const fetchData = async () => {
         const eid = sessionStorage.getItem('employerId');
-        let res1 = await tindangtrongtuan(eid);
-        let res2 = await ungvientrongtuan(eid);
-        let res3 = await ungvientrongthang(eid);
-        let res4 = await tindangtrongthang(eid);
-        let res5 = await tindangtuyendung(eid);
-        let res6 = await ungviendaungtuyen(eid);
-        console.log("res1",res1);
-        console.log("res2",res2);
-        console.log("res3",res3);
-        console.log("res4",res4);
-        console.log("res5",res5);
-        console.log("res6",res6);
+        console.log("eid", eid);
+        let res1 = await tindangtrongtuan(eid, tokenE);
+        let res2 = await ungvientrongtuan(eid, tokenE);
+        let res3 = await ungvientrongthang(eid, tokenE);
+        let res4 = await tindangtrongthang(eid, tokenE);
+        let res5 = await tindangtuyendung(eid, tokenE);
+        let res6 = await ungviendaungtuyen(eid, tokenE);
+
+        console.log("res1", res1);
+        console.log("res2", res2);
+        console.log("res3", res3);
+        console.log("res4", res4);
+        console.log("res5", res5);
+        console.log("res6", res6);
+
+
         if (eid) {
             settindangtrongtuan(res1);
             setungvientrongtuan(res2);
@@ -37,7 +42,7 @@ function EmployerPage() {
             settindangtrongthang(res4);
             settindadang(res5);
             setuvdatuyen(res6);
-        }else{
+        } else {
             console.log("lối iiiiiiiiiiiiiiiiii");
         }
     }
@@ -54,7 +59,8 @@ function EmployerPage() {
 
                 <div className="employer-page-content">
                     <div className="employer-page-content-info">
-                        <img src="https://c.animaapp.com/3RPBHCw2/img/user-png@2x.png" />
+                        <img id='emp-avt' src={sessionStorage.getItem("imageE")}/>
+                        {/* <img src="https://c.animaapp.com/3RPBHCw2/img/user-png@2x.png" /> */}
                         <div className="employer-page-content-info-name">{name}</div>
                     </div>
 
@@ -62,7 +68,10 @@ function EmployerPage() {
                         <div className="employer-page-content-recruitment-left">
                             <div className="employer-page-content-recruitment-left-item-1">
                                 <div className="employer-page-content-recruitment-left-item-content">
-                                    <div>{tindadang}</div>
+                                    {
+                                        tindadang > 0 ? <div>{tindadang}</div> : <div>{0}</div>
+                                    }
+                                    {/* <div>{tindadang}</div> */}
                                     <div>Tin đăng tuyển dụng</div>
                                 </div>
                                 <div className="employer-page-content-recruitment-left-item-icon">
@@ -72,7 +81,10 @@ function EmployerPage() {
 
                             <div className="employer-page-content-recruitment-left-item-1">
                                 <div className="employer-page-content-recruitment-left-item-content">
-                                    <div>{uvdatuyen}</div>
+                                    {
+                                        uvdatuyen > 0 ? <div > {uvdatuyen}</div> : <div>{0}</div>
+                                    }
+                                    {/* <div>{uvdatuyen}</div> */}
                                     <div>Ứng viên đã ứng tuyển</div>
                                 </div>
                                 <div className="employer-page-content-recruitment-left-item-icon">
@@ -81,13 +93,20 @@ function EmployerPage() {
                             </div>
 
                             <div className="employer-page-content-recruitment-left-item-2">
-                                <div className="employer-page-content-recruitment-left-item-time" style={{marginRight: "30px"}}>
+                                <div className="employer-page-content-recruitment-left-item-time" style={{ marginRight: "30px" }}>
                                     <div>Tuần này</div>
                                     <div>Tháng này</div>
                                 </div>
                                 <div className="employer-page-content-recruitment-left-item-quantity">
-                                    <div>{tintrongtuan} tin</div>
-                                    <div>{tintrongthang} tin</div>
+                                    {
+
+                                        tintrongtuan > 0 ? <div>{tintrongtuan} tin</div> : <div>{0} tin</div>
+                                    }
+                                    {/* <div>{tintrongtuan} tin</div> */}
+                                    {
+                                        tintrongthang > 0 ? <div>{tintrongthang} tin</div> : <div>{0} tin</div>
+                                    }
+                                    {/* <div>{tintrongthang} tin</div> */}
                                 </div>
                             </div>
 
@@ -97,8 +116,14 @@ function EmployerPage() {
                                     <div>Tháng này</div>
                                 </div>
                                 <div className="employer-page-content-recruitment-left-item-quantity">
-                                    <div>{uvtrongtuan} ứng viên</div>
-                                    <div>{uvtrongthang} ứng viên</div>
+                                    {
+                                        uvtrongtuan > 0 ? <div>{uvtrongtuan} ứng viên</div> : <div>{0} ứng viên</div>
+                                    }
+                                    {/* <div>{uvtrongtuan} ứng viên</div> */}
+                                    {
+                                        uvtrongthang > 0 ? <div> {uvtrongthang} ứng viên</div> : <div>{0} ứng viên</div>
+                                    }
+                                    {/* <div>{uvtrongthang} ứng viên</div> */}
                                 </div>
                             </div>
 
@@ -128,8 +153,8 @@ function EmployerPage() {
                         </div>
 
                         <div className="employer-page-content-choice-item">
-                            <a className="employer-page-content-choice-item-icon" href="/find-candidate"><i class="fa-solid fa-user-plus" id="choice-icon-3"></i></a>
-                            <div className="employer-page-content-choice-item-title">Tìm kiếm ứng viên</div>
+                            <a className="employer-page-content-choice-item-icon" href="/interview-manage"><i class="fa-regular fa-calendar-days" id="choice-icon-3"></i></a>
+                            <div className="employer-page-content-choice-item-title">Quản lý lịch phỏng vấn</div>
                         </div>
 
                         <div className="employer-page-content-choice-item">
@@ -137,8 +162,8 @@ function EmployerPage() {
                             <div className="employer-page-content-choice-item-title">Quản lý ứng viên</div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     )
 }

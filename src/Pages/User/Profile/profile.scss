@@ -7,7 +7,7 @@
 
 .btn-save-profile{
   color: #ffffff;
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -24,7 +24,7 @@
   flex-direction: column;
   gap: 42px;
   padding: 10px;
-  margin: 10px 10px 90px 160px
+  margin: 10px 10px 90px 0px
 }
 
 .text-wrapper-5 {
@@ -32,7 +32,7 @@
   -webkit-line-clamp: 0;
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultpurple-heart);
   display: -webkit-box;
-  font-family: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-family);
+  // // font-family: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-family);
   font-size: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-size);
   font-style: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-style);
   font-weight: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-weight);
@@ -44,6 +44,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   width: fit-content;
+  font-size: 40px;
 }
 
 .form {
@@ -63,7 +64,7 @@
   padding: 0px 573.34px 0px 0px;
   position: absolute;
   top: 0;
-  width: 1028px;
+  width: 100%;
 }
 
 
@@ -118,7 +119,7 @@
 
 .text-wrapper-6 {
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultblack-85);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 700;
   height: 22px;
@@ -170,7 +171,7 @@
 
 .text-wrapper-7 {
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultblack-85);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -191,7 +192,7 @@
 
 .text-wrapper-8 {
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultblack-85);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 400;
   height: 22px;
@@ -205,10 +206,10 @@
 
 .overlap-group {
   height: 193px;
-  left: -16px;
+  left: 85px;
   position: absolute;
   top: 178px;
-  width: 1060px;
+  width: 100%;
 }
 
 .div-ant-row-3 {
@@ -220,7 +221,7 @@
   left: 0;
   position: absolute;
   top: 0;
-  width: 1060px;
+  width: 100%;
 }
 
 .div-ant-col-3 {
@@ -233,11 +234,12 @@
   max-width: 530px;
   padding: 0px 16px 24px;
   position: relative;
+  translate: -90px;
 }
 
 .text-wrapper-9 {
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultblack-85);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0;
@@ -315,7 +317,7 @@
 
 .text-wrapper-10 {
   color: var(--fjobvnaccount-1529599975585937-5x-695200012207031-2defaultsilver);
-  font-family: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-family);
+  // // font-family: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-family);
   font-size: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-size);
   font-style: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-style);
   font-weight: var(--fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-weight);
@@ -341,7 +343,7 @@
   border-radius: 7px;
   display: inline-flex;
   flex: 0 0 auto;
-  height: 40px;
+  height: 50px;
   padding: 5px 12.8px;
   position: relative;
   width: 498px;
@@ -359,7 +361,7 @@
 
 .text-wrapper-11 {
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultblack-85);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -387,7 +389,7 @@
   left: 0;
   position: absolute;
   top: 96px;
-  width: 1060px;
+  width: 100%;
 }
 
 .div-ant-row-6 {
@@ -439,7 +441,7 @@
 
 .text-wrapper-12 {
   color: var(--fjobvnaccount-1529599975585937-5x-695200012207031-2defaultsalem);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-style: italic;
   font-weight: 400;
@@ -494,12 +496,12 @@
   display: flex;
   height: 56px;
   justify-content: space-between;
-  left: 0;
+  left: 100px;
   padding: 9.21px 0px 9.19px;
   position: absolute;
   top: 371px;
-  width: 1028px;
-  translate: -15px 10px;
+  width: 100%;
+  translate: -15px 15px;
 }
 
 .button-wrapper {
@@ -530,18 +532,18 @@
   display: flex;
   height: 56px;
   justify-content: space-between;
-  left: 0;
+  left: 100px;
   padding: 9.21px 0px 9.19px;
   position: absolute;
-  top: 457px;
-  width: 1028px;
+  top: 465px;
+  width: 100%;
   translate: -15px 10px;
 }
 
 #profile-address {
   max-width: 498px;
   width: 498px;
-  height: 150px;
+  height: 80px;
   border-radius: 6px;
   gap: 8px;
   margin-bottom: 10px;
@@ -566,7 +568,7 @@
 
 .text-wrapper-13 {
   color: var(--fjobvnaccount15295999755859375x6952000122070312defaultblack-85);
-  font-family: "Roboto", Helvetica;
+  // font-family: "Roboto", Helvetica;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0;
@@ -586,7 +588,7 @@
   padding: 0px 444px;
   position: absolute;
   top: 541px;
-  width: 1028px;
+  width: 100%;
 }
 
 .button-2 {
@@ -607,7 +609,7 @@
 }
 
 * {
-  font-family: 'Poppins', sans-serif;
+  // font-family: 'Poppins', sans-serif;
   padding: 0;
   margin: 0;
 }
@@ -686,59 +688,32 @@
   margin-top: 0.2rem;
 }
 
-:root {
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-bold-14-font-family: "Roboto-Bold", Helvetica;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-bold-14-font-size: 14px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-bold-14-font-style: normal;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-bold-14-font-weight: 700;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-bold-14-letter-spacing: 0px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-bold-14-line-height: 22px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-italic-14-font-family: "Roboto-Italic",
-    Helvetica;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-italic-14-font-size: 14px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-italic-14-font-style: italic;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-italic-14-font-weight: 400;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-italic-14-letter-spacing: 0px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-italic-14-line-height: 22px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-12-font-family: "Roboto-Regular",
-    Helvetica;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-12-font-size: 12px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-12-font-style: normal;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-12-font-weight: 400;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-12-letter-spacing: 0px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-12-line-height: 20px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-family: "Roboto-Regular",
-    Helvetica;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-size: 14px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-style: normal;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-font-weight: 400;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-letter-spacing: 0px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-regular-14-line-height: normal;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-14-font-family: "Roboto-SemiBold",
-    Helvetica;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-14-font-size: 14px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-14-font-style: normal;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-14-font-weight: 600;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-14-letter-spacing: 0px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-14-line-height: 22px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-family: "Roboto-SemiBold",
-    Helvetica;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-size: 20px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-style: normal;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-font-weight: 600;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-letter-spacing: 0px;
-  --fjob-vn-account-1529-5999755859375x695-2000122070312-default-roboto-semibold-20-line-height: 31.43000030517578px;
-  --fjobvnaccount-1529599975585937-5x-695200012207031-2defaultalto: rgba(217, 217, 217, 1);
-  --fjobvnaccount-1529599975585937-5x-695200012207031-2defaultnero: rgba(255, 255, 255, 1);
-  --fjobvnaccount-1529599975585937-5x-695200012207031-2defaultpurple: rgba(88, 0, 155, 1);
-  --fjobvnaccount-1529599975585937-5x-695200012207031-2defaultsalem: rgba(6, 152, 60, 1);
-  --fjobvnaccount-1529599975585937-5x-695200012207031-2defaultsilver: rgba(191, 191, 191, 1);
-  --fjobvnaccount15295999755859375x6952000122070312defaultblack-25: rgba(0, 0, 0, 0.25);
-  --fjobvnaccount15295999755859375x6952000122070312defaultblack-30: rgba(0, 0, 0, 0.3);
-  --fjobvnaccount15295999755859375x6952000122070312defaultblack-85: rgba(0, 0, 0, 0.85);
-  --fjobvnaccount15295999755859375x6952000122070312defaultjapanese-laurel: rgba(255, 133, 0, 1);
-  --fjobvnaccount15295999755859375x6952000122070312defaultpurple-heart: rgba(130, 24, 209, 1);
-  --fjobvnaccount15295999755859375x6952000122070312defaultsherpa-blue: rgba(255, 77, 79, 1);
-  --fjobvnaccount15295999755859375x6952000122070312defaultwild-sand: rgba(245, 245, 245, 1);
-  --variable-collection-xanh: rgba(102, 188, 70, 1);
+@media only screen and (max-width: 1400px) {
+  .div-ant-col-3 {
+    align-items: flex-start;
+    display: inline-flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 10.5px;
+    height: 96.5px;
+    max-width: 530px;
+    padding: 0px 16px 24px;
+    position: relative;
+    translate: 90px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .div-ant-col-3 {
+    align-items: flex-start;
+    display: inline-flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 10.5px;
+    height: 96.5px;
+    max-width: 530px;
+    padding: 0px 16px 24px;
+    position: relative;
+    translate: 90px;
+  }
 }

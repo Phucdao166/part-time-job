@@ -1,17 +1,33 @@
 
 import axios from "./customizeAxios";
 
-const SentFeedback = (appJobRequest) => {
-    return axios.post("/Feedback/CreateFeedbackToEmployer",appJobRequest )
+const SentFeedback = (appJobRequest,accessToken) => {
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json', // Có thể thêm các header khác nếu cần
+      };
+    return axios.post("/Feedback/CreateFeedbackToEmployer",appJobRequest,{headers} )
 }
-const SentFeedbackToCandidate = (appJobRequest) => {
-    return axios.post("/Feedback/CreateFeedbackToCandidate",appJobRequest )
+const SentFeedbackToCandidate = (appJobRequest,accessToken) => {
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json', // Có thể thêm các header khác nếu cần
+      };
+    return axios.post("/Feedback/CreateFeedbackToCandidate",appJobRequest,{headers} )
 }
-const GetFeedbackForCandidate = (aid) => {
-    return axios.get(`/Feedback/GetFeedbackForCandidate?aid=${aid}`)
+const GetFeedbackForCandidate = (aid,accessToken) => {
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json', // Có thể thêm các header khác nếu cần
+      };
+    return axios.get(`/Feedback/GetFeedbackForCandidate?aid=${aid}`,{headers})
 }
-const GetFeedbackForEmployer = (aid) => {
-    return axios.get(`/Feedback/GetFeedbackForEmployer?aid=${aid}`)
+const GetFeedbackForEmployer = (aid,accessToken) => {
+    const headers = {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json', // Có thể thêm các header khác nếu cần
+      };
+    return axios.get(`/Feedback/GetFeedbackForEmployer?aid=${aid}`,{headers})
 }
 
 export {SentFeedback,SentFeedbackToCandidate,GetFeedbackForCandidate,GetFeedbackForEmployer}

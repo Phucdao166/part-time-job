@@ -11,7 +11,8 @@ import { getjobbyid, updatejob } from '../../../../Service/employService';
 import { format } from 'date-fns';
 import { getCity } from '../../../../Service/candidateService';
 import { GetAllCate, GetAllJobType, GetAllJobTypeByCate } from '../../../../Service/searchService';
-function ViewPost() {
+import { EditAttributesRounded } from "@mui/icons-material";
+function EditPost() {
     const [listjobdt, setListJob] = useState([]);
     const [jobid, setjobid] = useState();
     const [empid, setEid] = useState(sessionStorage.getItem('employerId'));
@@ -27,6 +28,7 @@ function ViewPost() {
     const [NameDistrict, setNameDistrict] = useState();
     const [loading, Setloading] = useState();
     const [selectedDays, setSelectedDays] = useState([]);
+    const tokenE = sessionStorage.getItem("tokenE");
     const [formInputEmp, setFormInput] = useState({
         // "title": "job 4",
         id: jobid,
@@ -38,25 +40,24 @@ function ViewPost() {
         deadline: "",
         createdAt: "2023-11-11T16:03:01.812Z",
         jobTime: "",
-        checktypejob: 0,
         status: 0,
         jobTypeId: 1,
         experient: "",
-        rolecompany: 0,
         numberApply: 0,
         typeJob: 0,
         daywork: "",
         note: "",
-        dob: 0,
         toage: 0,
         levellearn: "",
         fromage: 0,
         welfare: "",
         moredesciption: "",
         typename: "",
-        agreesalary: "",
         company: "",
         typeSalary: "",
+        startdate: "2023-11-11T16:03:01.812Z",
+        gender: "",
+        enddate: "2023-11-11T16:03:01.812Z",
     });
     useEffect(() => {
         const fetchData = async () => {
@@ -72,7 +73,7 @@ function ViewPost() {
         getCate();
         getJobtype();
         setCityDistrict();
-    }, [formInputEmp.location, city]);
+    }, [formInputEmp]);
 
     useEffect(() => {
         console.log("empid", empid);
@@ -85,24 +86,24 @@ function ViewPost() {
             setjobid(searchParams.get('jobid'));
         };
         fetchData();
-    }, [jobid]);
+    }, []);
 
-    const setCityDistrict = () => {
+    const setCityDistrict = async () => {
+        console.log("Dữ liệu mảng setCityDistrict 0oooooooe:", formInputEmp);
+        console.log("Dữ liệu mảng city 0oooooooe:", city);
+        console.log("Dữ liệu mảng formInputEmp.location.split(',').length 0oooooooe:", formInputEmp.location.split(',').length);
         if (city && formInputEmp.location && formInputEmp.location.length > 0 && formInputEmp.location.split(',').length > 2 && city.length > 0) {
             const addressParts = formInputEmp.location.split(',');
             console.log("addressParts", addressParts);
             setNameCity(addressParts[addressParts.length - 1]);
             setNameDistrict(addressParts[addressParts.length - 2]);
             formInputEmp.location = addressParts[0];
-
             const selectedCity = city.find((item) => item.name === addressParts[addressParts.length - 1]);
             if (selectedCity) {
                 setDistric(selectedCity.districts);
             }
         }
     }
-
-
 
     const getCate = async () => {
         let res = await GetAllCate();
@@ -119,25 +120,25 @@ function ViewPost() {
         setListjobType(res);
     }
 
-
-
-    // const handleEmployInput = (name, value) => {
-    //     setFormInput({ ...formInputEmp, [name]: value });
-    // };
     const handleEmployInput = (name, value) => {
         // Cập nhật giá trị vào đối tượng formInputEmp
         setFormInput((prevFormInputEmp) => ({
             ...prevFormInputEmp,
             [name]: value,
         }));
-        formInputEmp.daywork = getSelectedDaysString();
+        if (formInputEmp.typeJob !== 0) {
+            formInputEmp.daywork = getSelectedDaysString();
+        }
         console.log("formInputEmp.daywork", formInputEmp.daywork);
         console.log("formInputEmp", formInputEmp)
     };
 
 
     let getJobByid = async (jobid) => {
-        let res = await getjobbyid(jobid);
+        let res = await getjobbyid(jobid,tokenE);
+        let res1 = await getCity(3);
+        console.log("City", res1);
+        setCity(res1);
         console.log("em", res);
         console.log("forminput", formInputEmp);
         setListJob(res);
@@ -153,30 +154,35 @@ function ViewPost() {
                 deadline: res[0].deadline,
                 createdAt: res[0].createdAt,
                 jobTime: res[0].jobTime,
-                checktypejob: res[0].checktypejob,
                 status: res[0].status,
                 jobTypeId: res[0].jobTypeId,
                 experient: res[0].experient,
                 company: res[0].company,
-                rolecompany: res[0].rolecompany,
                 numberApply: res[0].numberApply,
                 typeJob: res[0].typeJob,
                 daywork: res[0].daywork,
                 note: res[0].note,
-                dob: res[0].dob,
                 toage: res[0].toage,
                 levellearn: res[0].levellearn,
                 fromage: res[0].fromage,
                 welfare: res[0].welfare,
                 moredesciption: res[0].moredesciption,
                 typename: res[0].typename,
-                agreesalary: res[0].agreesalary,
+                typeSalary: res[0].typeSalary,
+                startdate: res[0].startdate,
+                gender: res[0].gender,
+                enddate: res[0].enddate,
             });
-            setSelectedDays(res[0].daywork.split(','));
+            console.log("Dữ liệu mảng:", formInputEmp);
+            try {
+                setSelectedDays(res[0].daywork.split(','));
+            } catch {
+
+            }
+
         } else {
             console.log("loi o day");
         }
-        setCityDistrict();
         console.log("Dữ liệu mảng:", res);
     }
     const handleEmployInput1 = (name, value) => {
@@ -210,10 +216,26 @@ function ViewPost() {
         await setRegisterRequest({ ...RegisterRequest, [name]: value });
         setNameDistrict(value);
     };
+    const checkTime = (time) => {
+        const timeRegex = /^([0-9]|1[0-9]|2[0-3])h([0-9]|1[0-9]|2[0-3])h$/;
 
+        // Kiểm tra xem thời gian có khớp với định dạng không
+        if (timeRegex.test(time)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     const handleUpdateJob = async () => {
         console.log("nhay update");
-        formInputEmp.daywork = getSelectedDaysString();
+        if (checkTime(formInputEmp.jobTime)) {
+            console.log("Invalid form");
+            toast.error("Điền lại thông tin thời gian làm! Sai mẫu");
+            return;
+        }
+        if (formInputEmp.typeJob !== 0) {
+            formInputEmp.daywork = getSelectedDaysString();
+        }
         formInputEmp.location = formInputEmp.location + "," + NameDistrict + "," + NameCity;
         console.log("formInputEmp.location", formInputEmp.location);
         console.log("formInputEmp.location", formInputEmp);
@@ -245,26 +267,10 @@ function ViewPost() {
             {listjobdt && listjobdt.length > 0 && listjobdt.map((item, index) => {
                 return (
                     <form>
-
                         <div className="employer-page">
                             <div className="create-post-content">
                                 <div className="create-post">
-                                    <div className="create-post-top">Xem bài đăng</div>
-                                    <div className="create-post-choose-role">
-                                        <div className="create-post-title">Vai trò đăng<img id='require-icon' src={require_icon} alt="" /></div>
-                                        <div className="create-post-role">
-                                            <div className="create-post-role-radio">
-                                                <input type="radio" name="rolecompany"
-                                                    id="personal" value={formInputEmp.rolecompany} checked={formInputEmp.rolecompany === 1} />
-                                                <label for="personal">Cá nhân</label>
-                                            </div>
-                                            <div className="create-post-role-radio">
-                                                <input type="radio"
-                                                    name="rolecompany" value={formInputEmp.rolecompany} id="company" checked={formInputEmp.rolecompany === 0} />
-                                                <label for="company">Công ty</label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div className="create-post-top">Xem lại bài đăng</div>
                                     <div className="create-post-title">Tên cửa hàng/Công ty<img id='require-icon' src={require_icon} alt="" /></div>
                                     <Form.Control
                                         id="create-post-title"
@@ -272,9 +278,9 @@ function ViewPost() {
                                         placeholder="Bơ Bán Bò"
                                         name="company"
                                         value={formInputEmp.company}
-
                                     />
                                 </div>
+
                                 <div className="create-post-info">
                                     <div>
                                         <div className="create-post-title">Tiêu đề tin tuyển dụng<img id='require-icon' src={require_icon} alt="" /></div>
@@ -293,7 +299,6 @@ function ViewPost() {
                                                 id="create-post-select"
                                                 name="typename"
                                                 required
-                                                value={formInputEmp.typename}
                                             >
                                                 <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Các ngành nghề</option>
                                                 {listcate && listcate.length > 0 &&
@@ -316,7 +321,6 @@ function ViewPost() {
                                                 id="create-post-select"
                                                 name="jobTypeId"
                                                 required
-                                                value={formInputEmp.jobTypeId}
                                             >
                                                 <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Loại công việc</option>
                                                 {listjobType && listjobType.length > 0 &&
@@ -338,70 +342,75 @@ function ViewPost() {
                                             <div className="create-post-choose-role">
                                                 <div className="create-post-title">Mức lương<img id='require-icon' src={require_icon} alt="" /></div>
                                                 <div className="create-post-role">
-                                                    <div className="create-post-role-radio"><input type="text" name="salary"
+                                                    <div className="create-post-role-radio"><input type="text" name="salary" 
                                                         placeholder=""
                                                         value={formInputEmp.salary}
                                                     />
                                                         <div className="create-post-role">
                                                             <div className="create-post-role-radio"><input type="radio"
-                                                                name="typeSalary"
-
+                                                                name="typeSalary"                                                                
                                                                 checked={formInputEmp.typeSalary === "Giờ"}
                                                                 value="Giờ"
                                                             />Giờ</div>
                                                             <div className="create-post-role-radio"><input type="radio"
                                                                 name="typeSalary"
-
+                                                                checked={formInputEmp.typeSalary === "Ngày"}
+                                                                value="Ngày"
+                                                            />Ngày</div>
+                                                            <div className="create-post-role-radio"><input type="radio"
+                                                                name="typeSalary"
                                                                 checked={formInputEmp.typeSalary === "Tháng"}
                                                                 value="Tháng"
                                                             />Tháng</div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div className="create-post-title">Tỉnh/Thành phố<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Select aria-label="Default select example" id="create-post-select"
+                                                    name="city"
+                                                    value={NameCity}
+                                                    required
+                                                >
+                                                    <option style={{ display: "none" }}>Chọn Tỉnh/Thành Phố</option>
+                                                    {city && city.length > 0 &&
+                                                        city.map((item1, index1) => {
+                                                            return (
+                                                                item1.name === NameCity ? (
+                                                                    <option selected value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                ) : (
+                                                                    <option value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                )
+                                                            )
+                                                        })}
+                                                </Form.Select>
+                                                <div className="create-post-title">Quận/Huyện<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Select aria-label="Default select example" id="create-post-select"
+                                                    name="district"
+                                                    value={NameDistrict}
+                                                    required
+                                                >
+                                                    <option style={{ display: "none" }}>Chọn Quận/Huyện</option>
+                                                    {distric && distric.length > 0 &&
+                                                        distric.map((item1, index1) => {
+                                                            return (
+                                                                item1.name === NameDistrict ? (
+                                                                    <option value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                ) : (
+                                                                    <option value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                )
 
-                                            <div className="create-post-title">Tỉnh/Thành phố<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <Form.Select aria-label="Default select example" id="create-post-select"
-                                                name="city"
-                                                value={NameCity}
-                                                required
-                                            >
-                                                {city && city.length > 0 &&
-                                                    city.map((item1, index1) => {
-                                                        return (
-                                                            item1.name === NameCity ? (
-                                                                <option selected value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            ) : (
-                                                                <option value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
                                                             )
-                                                        )
-                                                    })}
-                                            </Form.Select>
-                                            <div className="create-post-title">Quận/Huyện<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <Form.Select aria-label="Default select example" id="create-post-select"
-                                                name="district"
-                                                value={NameDistrict}
-                                                required
-                                            >
-                                                {distric && distric.length > 0 &&
-                                                    distric.map((item1, index1) => {
-                                                        return (
-                                                            item1.name === NameDistrict ? (
-                                                                <option value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            ) : (
-                                                                <option value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            )
-                                                        )
-                                                    })}
-                                            </Form.Select>
+                                                        })}
+                                                </Form.Select>
+                                            </div>
                                         </div>
                                         <div className="create-post-info-job-right">
                                             <div>
@@ -420,33 +429,99 @@ function ViewPost() {
                                                 <div className="create-post-role">
                                                     <div className="create-post-role-radio"><input type="radio"
                                                         name="typeJob"
-
-                                                        value={formInputEmp.typeJob} checked={formInputEmp.typeJob === 1}
-                                                    />Ngắn hạn</div>
+                                                        value={0} checked={formInputEmp.typeJob === 0}
+                                                    /> Trong ngày</div>
                                                     <div className="create-post-role-radio"><input type="radio"
-
                                                         name="typeJob"
-                                                        checked={formInputEmp.typeJob === 0}
-                                                        value={formInputEmp.typeJob}
-                                                    />Dài hạn</div>
+                                                        value={1} checked={formInputEmp.typeJob === 1}
+                                                    />Ngắn hạn(Trong 1 tuần-1 tháng)</div>
+                                                    <div className="create-post-role-radio"><input type="radio"
+                                                        name="typeJob"
+                                                        checked={formInputEmp.typeJob === 2}
+                                                        value={2}
+                                                    />Dài hạn(Trên 1 tháng)</div>
+                                                </div>
+                                            </div>
+                                            {formInputEmp.typeJob === 0 ? (
+                                                <div className="create-post-choose-role">
+                                                    <div className="create-post-title">Ngày làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                    <Form.Control
+                                                        placeholder="yyyy/MM/dd"
+                                                        id="datemain"
+                                                        type="date"
+                                                        name="daywork"
+                                                        min={currentDate}
+                                                        value={formInputEmp.daywork.includes(",") ? '' : format(new Date(formInputEmp.daywork), 'yyyy-MM-dd')}
+                                                        required
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <div className="create-post-title">Ngày làm việc trong tuần<img id='require-icon' src={require_icon} alt="" /></div>
+                                                    <div className="create-post-role">
+                                                        {[1, 2, 3, 4, 5, 6, 7, 8].map(day => (
+                                                            <div key={day} className="create-post-role-radio">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    name="daywork"
+                                                                    value={day}
+                                                                    checked={selectedDays.includes(day.toString())}
+                                                                />
+                                                                {day === 1 ? 'Tất cả' : day === 8 ? 'Chủ nhất' : `Thứ ${day}`}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <div className="create-post-title">Ngày bắt đầu làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                    <Form.Control
+                                                        placeholder="dd/MM/YYYY"
+                                                        id="datemain"
+                                                        type="date"
+                                                        name="startdate"
+                                                        min={currentDate}
+                                                        value={format(new Date(formInputEmp.startdate), 'yyyy-MM-dd')}
+                                                        required
+                                                    />
+                                                    <div className="create-post-title">Ngày kết thúc làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                    <Form.Control
+                                                        placeholder="dd/MM/YYYY"
+                                                        id="datemain"
+                                                        type="date"
+                                                        name="enddate"
+                                                        min={currentDate}
+                                                        value={format(new Date(formInputEmp.enddate), 'yyyy-MM-dd')}
+                                                        required
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="create-post-choose-role">
+                                                <div className="create-post-title">Nhập thời gian làm việc trong ngày: 6h-9h<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <div className="create-post-role">
+                                                    <Form.Control
+                                                        id="create-post-title"
+                                                        type="text"
+                                                        placeholder="7h-10h và 14h-17"
+                                                        name="jobTime"
+                                                        value={formInputEmp.jobTime}
+                                                    />
                                                 </div>
                                             </div>
 
                                             <div className="create-post-choose-role">
                                                 <div className="create-post-title">Thời hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
                                                 <Form.Control
-                                                    placeholder="dd/MM/YYYY"
+                                                    placeholder="yyyy/MM/dd"
                                                     id="datemain"
                                                     type="date"
                                                     name="deadline"
                                                     min={currentDate}
-                                                    value={formInputEmp.deadline}
+                                                    value={format(new Date(formInputEmp.deadline), 'yyyy-MM-dd')}
                                                     required
                                                 />
                                             </div>
                                         </div>
                                     </div>
                                     <div>
+
                                         <div className="create-post-title">Địa chỉ cụ thể<img id='require-icon' src={require_icon} alt="" /></div>
                                         <Form.Control
                                             id="create-post-des"
@@ -458,64 +533,24 @@ function ViewPost() {
                                     </div>
                                 </div>
 
-                                <div className="create-post-time">
-                                    <div className="create-post-choose-role">
-                                        <div className="create-post-title">Lịch làm việc<img id='require-icon' src={require_icon} alt="" /></div>
-                                        <div className="create-post-role">
-                                            <div className="create-post-role-radio"><input type="radio" name="checktypejob"
-                                                checked={formInputEmp.checktypejob === 1}
-                                                value={1}
-                                            />Theo giờ</div>
-                                            <div className="create-post-role-radio"><input type="radio" name="checktypejob"
-                                                checked={formInputEmp.checktypejob === 0}
-                                                value={formInputEmp.checktypejob}
-                                            />Theo ca</div>
-                                        </div>
-                                    </div>
-                                    <div className="create-post-title">Nhập thời gian làm việc trong ngày <img id='require-icon' src={require_icon} alt="" /></div>
+                                <div className="create-post-info">
+                                    <div className="create-post-title">Ghi chú <img id='require-icon' src={require_icon} alt="" /></div>
                                     <Form.Control
                                         id="create-post-title"
                                         type="text"
-                                        placeholder="18h-20h"
-                                        name="jobTime"
-                                        value={formInputEmp.jobTime}
+                                        name="note"
+                                        value={formInputEmp.note}
+                                        placeholder="Ghi chú"
                                     />
-                                </div>
 
-                                <div className="create-post-time">
-                                    <div className="create-post-choose-role">
-                                        <div className="create-post-title">Ngày làm việc<img id='require-icon' src={require_icon} alt="" /></div>
-                                        <div className="create-post-role">
-                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(day => (
-                                                <div key={day} className="create-post-role-radio">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="daywork"
-                                                        value={day}
-                                                        checked={selectedDays.includes(day.toString())}
-                                                    />
-                                                    {day === 1 ? 'Tất cả' : day === 8 ? 'Chủ nhất' : `Thứ ${day}`}
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="create-post-title">Ghi chú <img id='require-icon' src={require_icon} alt="" /></div>
-                                        <Form.Control
-                                            id="create-post-title"
-                                            type="text"
-                                            name="note"
-                                            value={formInputEmp.note}
-                                            placeholder="Ghi chú"
-                                        />
-
-                                        <div className="create-post-title">Mô tả công việc <img id='require-icon' src={require_icon} alt="" /></div>
-                                        <Form.Control
-                                            id="create-post-des"
-                                            type="text"
-                                            value={formInputEmp.description}
-                                            name="description"
-                                            placeholder="Mô tả công việc"
-                                        />
-                                    </div>
+                                    <div className="create-post-title">Mô tả công việc <img id='require-icon' src={require_icon} alt="" /></div>
+                                    <Form.Control
+                                        id="create-post-des"
+                                        type="text"
+                                        value={formInputEmp.description}
+                                        name="description"
+                                        placeholder="Mô tả công việc"
+                                    />
                                 </div>
                                 <div className="create-post-gender">
                                     <div className="create-post-info-job">
@@ -524,21 +559,19 @@ function ViewPost() {
                                                 <div className="create-post-title">Giới tính <span>(Để trống nếu không yêu cầu)</span></div>
                                                 <div className="create-post-role">
                                                     <div className="create-post-role-radio"><input type="radio"
-                                                        name="dob"
-
-                                                        checked={formInputEmp.dob === 1}
-                                                        value={formInputEmp.dob}
+                                                        name="gender"
+                                                        checked={formInputEmp.gender === "Nam"}
+                                                        value="Nam"
                                                     />Nam</div>
                                                     <div className="create-post-role-radio"><input type="radio"
-                                                        name="dob"
-
-                                                        checked={formInputEmp.dob === 0}
-                                                        value={formInputEmp.dob}
+                                                        name="gender"
+                                                        checked={formInputEmp.gender === "Nữ"}
+                                                        value="Nữ"
                                                     />Nữ</div>
                                                     <div className="create-post-role-radio"><input type="radio"
-                                                        name="dob"
-                                                        checked={formInputEmp.dob === 3}
-                                                        value={3}
+                                                        name="gender"
+                                                        checked={formInputEmp.gender === "Bất kỳ"}
+                                                        value="Bất kỳ"
                                                     />Không yêu cầu</div>
                                                 </div>
                                             </div>
@@ -547,8 +580,7 @@ function ViewPost() {
                                             <Form.Select aria-label="Default select example"
                                                 id="create-post-select"
                                                 name="levellearn"
-                                                value={formInputEmp.levellearn}
-                                            >
+                                                value={formInputEmp.levellearn}>
                                                 <option style={{ display: "none" }}>Chọn trình để học vấn</option>
                                                 <option value="Chưa tốt nghiệp THPT">Chưa tốt nghiệp THPT</option>
                                                 <option value="Tốt nghiệp THPT">Tốt nghiệp THPT</option>
@@ -578,10 +610,10 @@ function ViewPost() {
                                                         <InputGroup className="mb-3">
                                                             <InputGroup.Text htmlFor="fromage" id="basic-addon1">Đến</InputGroup.Text>
                                                             <Form.Control
-                                                                 id="fromage"
-                                                                 type="number"
-                                                                 name="fromage"
-                                                                 value={formInputEmp.fromage}
+                                                                id="fromage"
+                                                                type="number"
+                                                                name="fromage"
+                                                                value={formInputEmp.fromage}
                                                             />
                                                         </InputGroup>
                                                     </div>
@@ -595,7 +627,6 @@ function ViewPost() {
                                                             id="create-post-select"
                                                             name="experient"
                                                             value={formInputEmp.experient}
-
                                                         >
                                                             <option value="Không yêu cầu" style={{ display: "none" }}>Chọn yêu cầu kinh nghiệm</option>
                                                             <option value="Có kinh nghiệm">Có kinh nghiệm</option>
@@ -615,7 +646,6 @@ function ViewPost() {
                                         id="create-post-title"
                                         type="text"
                                         name="welfare"
-
                                         value={formInputEmp.welfare}
                                         placeholder="Ghi chú"
                                     />
@@ -623,18 +653,19 @@ function ViewPost() {
                                     <Form.Control
                                         id="create-post-des"
                                         type="text"
-                                        name="moredesciption"
                                         value={formInputEmp.moredesciption}
                                         placeholder="Mô tả công việc"
                                     />
-                                </div>
 
-                                <div>
-                                    <Button id="create-post-btn" href="post" variant="info">Back</Button>
-                                    <ToastContainer />
                                 </div>
                             </div>
+
+                            <div>
+                                <Button style={{ translate: 735 }} id="create-post-btn" href="/post?to=3" variant="info">Quay lại</Button>
+                                <ToastContainer />
+                            </div>
                         </div>
+
                     </form>
                 )
             })}
@@ -642,4 +673,4 @@ function ViewPost() {
     )
 }
 
-export default ViewPost;
+export default EditPost;

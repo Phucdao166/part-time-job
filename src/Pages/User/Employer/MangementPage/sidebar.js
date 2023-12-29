@@ -13,7 +13,7 @@ const sidebarNavItems = [
     {
         display: 'Quản lý bài đăng',
         icon: <i className='bx bx-star'></i>,
-        to: '/post',
+        to: '/post' ,
         section: 'post'
     },
     {
@@ -38,11 +38,13 @@ function SideBar() {
     const location = useLocation();
 
     useEffect(() => {
-        setTimeout(() => {
-            const sidebarItem = sidebarRef.current.querySelector('.sidebar__menu__item');
-            indicatorRef.current.style.height = `${sidebarItem.clientHeight}px`;
-            setStepHeight(sidebarItem.clientHeight);
-        }, 50);
+        if (sessionStorage.getItem("employerId")) {
+            setTimeout(() => {
+                const sidebarItem = sidebarRef.current.querySelector('.sidebar__menu__item');
+                indicatorRef.current.style.height = `${sidebarItem.clientHeight}px`;
+                setStepHeight(sidebarItem.clientHeight);
+            }, 50);
+        }     
     }, []);
 
     // change active index

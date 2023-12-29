@@ -21,7 +21,7 @@ export default function AdminManageUser() {
             <Sidebar isSidebar={isSidebar} />
           </div>
           <div className="adminManageUser-content">
-            <main className="">
+            <main className="" style={{ translate: 270 }}>
               <Topbar setIsSidebar={setIsSidebar} />
               <Routes>
                 <Route path="/" element={<User />} />

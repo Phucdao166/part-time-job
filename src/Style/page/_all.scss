@@ -1,6 +1,6 @@
 @use "sass:map";
 @import "theme";
-@import "variable";
+@import "./variable.scss";
 
 html,
 body {
@@ -19,14 +19,14 @@ body a{
 
 .container-all{
     width: 100%;
-    // background-color: var(--light-green);
-    background-image: url(../../Assets/background-home.jpg);
+    background-color: var(--light-green);
+    // background-image: url(../../Assets/background-home.jpg);
     background-size: cover;
 }
 
-input[type=date]:required:invalid::-webkit-datetime-edit {
-    color: transparent;
-}
-input[type=date]:focus::-webkit-datetime-edit {
-    color: black !important;
-}
+// input[type=date]:required:invalid::-webkit-datetime-edit {
+//     color: transparent;
+// }
+// input[type=date]:focus::-webkit-datetime-edit {
+//     color: black !important;
+// }

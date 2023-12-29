@@ -7,7 +7,6 @@ export const ROUTERS = {
         REGISTERCANDIDATE:"register-candidate",
         REGISTEREMPLOYER:"register-employer",
         CHOOSEROLE:"role",
-        LISTJOB:"listjob",
         JOB:"job",
         JOBDETAIL:"job-detail",
         JOBMANAGE:"job-manage",
@@ -18,9 +17,8 @@ export const ROUTERS = {
         HISTORY:"job-history",
         STATUSJOB:"job-status",
         CV:"cv",
+        CVGenarel:"cvGenarel",
         CONTACT:"contact",
-        ABOUTUS:"aboutUs",
-        COMPANY:"company",
         OTP:"otp",
         OTPR:"otpRegister",
         VERIFY:"verify",
@@ -34,6 +32,7 @@ export const ROUTERS = {
         TINNHAP:"tinnhap-post",
         VIEWPOST:"view-post",
         POSTDETAIL:"post-detail",
+        POSTDETAILFORADMIN:"post-detail-for-admin",
         CREATEPOST:"add-post",
         CANDIDATEMANAGE:"candidate-manage",
         CANDIDATERECRUITED:"candidate-recruited",
@@ -48,5 +47,6 @@ export const ROUTERS = {
         ADMINMANAGEUSER:"adminManageUser",
         ADMINCONTACT:"adminContact",
         ADMINMAPPROVEPOST:"adminApprovePost",
+        ADMINBLACKLIST:"adminBlacklist",
     }
 }

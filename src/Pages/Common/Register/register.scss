@@ -1,34 +1,25 @@
-.register{
+.register {
     text-align: center;
 
-    &-form{
+    &-form {
         display: flex;
     }
 }
-#accept1{
-    width: 500px;
-    height: 20px;
-    font-family: Open Sans;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 14px;
-    letter-spacing: 0px;
-    text-align: left;
-    color: rgba(3, 159, 34, 0.612);
-    translate: 3px -13px;
-}
+
 #require-icon {
     width: 6px;
     height: 6px;
     translate: 2px -9px;
 }
-#type-register{
+
+#type-register {
     translate: 10px -60px;
 }
+
 #inputs {
     max-width: 550px;
-    width: 550px;
-    height: 70px;
+    width: 100%;
+    height: 200px;
     border-radius: 6px;
     gap: 8px;
     margin-bottom: 10px;
@@ -40,6 +31,10 @@
     &:hover {
         background-color: #e2e6eb84;
     }
+}
+
+.infomation {
+    width: 50%;
 }
 
 #title {
@@ -61,61 +56,68 @@
     color: #000;
 }
 
-#sex{
+#sex {
     margin: 10px;
 }
 
-#eye{
+#eye {
     translate: -15px -40px;
     float: right;
 }
 
-.btn-register{
+.btn-register {
     text-align: center;
 }
 
-#re-login{
-    width: 215px;
-    height: 20px;
+.btn-register p {
     font-family: Open Sans;
     font-size: 20px;
-    translate: 540px 10px;
     color: #000000;
     text-align: center;
 
-    & a{
+    & a {
         width: 340px;
         height: 13px;
         color: #66BC46;
         text-decoration: none;
     }
-    
+
 }
 
-#role{
+#role {
     height: 418px;
     text-align: center;
 }
 
-#btn-role{
+#btn-role {
     padding: 50px;
     margin: 70px 20px;
     font-size: 30px;
 }
 
-.role-choose{
+.role-choose {
     font-size: 30px;
     font-weight: bold;
     margin-top: 20px;
 }
 
-.back-login{
+.back-login {
     font-size: 20px;
     font-weight: bold;
     translate: 0 -40px;
 
-    & a{
+    & a {
         text-decoration: none;
     }
 }
 
+.register-form-left {
+    width: 50%;
+    margin-right: 20px;
+
+    & img {
+        width: 24px;
+        height: 24px;
+        translate: -35px 8px;
+    }
+}

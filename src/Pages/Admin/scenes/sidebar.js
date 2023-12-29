@@ -7,15 +7,33 @@ import { tokens } from "../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
+import ContactSupportOutlinedIcon from "@mui/icons-material/ContactSupportOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const navigateIfNotLoggedIn = () => {
+      if (!sessionStorage.getItem("isAdmin")) {
+        navigate("/");
+      }
+    };
+
+    // Kiểm tra và chuyển hướng khi component được render lần đầu
+    navigateIfNotLoggedIn();
+
+    // Nếu emid thay đổi trong quá trình render, kiểm tra và chuyển hướng lại
+    return () => {
+      navigateIfNotLoggedIn();
+    };
+  }, [navigate]);
   return (
     <MenuItem
       active={selected === title}
@@ -38,7 +56,7 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Dashboard");
 
   return (
-    <Box style={{height: '1200px'}}
+    <Box style={{ height: '750px', position: 'fixed' }}
       sx={{
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
@@ -60,33 +78,22 @@ const Sidebar = () => {
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
-          <MenuItem
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-            style={{
-              margin: "10px 0 20px 0",
-              color: colors.grey[100],
-            }}
-          >
-            {!isCollapsed && (
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                ml="15px"
-              >
-                <Typography variant="h3" color={colors.grey[100]}>
-                  ADMIN
-                </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                  <MenuOutlinedIcon />
-                </IconButton>
-              </Box>
-            )}
+          <MenuItem>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              ml="15px"
+            >
+              <Typography fontFamily={'Open Sans'} marginBottom={"30px"}  variant="h3" color={colors.grey[100]}>
+                ADMIN
+              </Typography>
+            </Box>
+
           </MenuItem>
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
+            {/* <Item
               title="Dashboard"
               to="/adminDashboard"
               icon={<HomeOutlinedIcon />}
@@ -100,13 +107,14 @@ const Sidebar = () => {
               sx={{ m: "15px 0 5px 20px" }}
             >
               Quản lý
-            </Typography>
+            </Typography> */}
             <Item
               title="Quản lý người dùng"
               to="/adminManageUser"
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              style={{ fontFamily: 'Open Sans' }}
             />
             <Item
               title="Duyệt bài đăng"
@@ -114,6 +122,15 @@ const Sidebar = () => {
               icon={<ReceiptOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              style={{ fontFamily: 'Open Sans' }}
+            />
+            <Item
+              title="Danh sách đen"
+              to="/adminBlacklist"
+              icon={<ContactsOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+              style={{ fontFamily: 'Open Sans' }}
             />
 
             <Typography
@@ -124,11 +141,12 @@ const Sidebar = () => {
               Hỗ trợ
             </Typography>
             <Item
-              title="Liên hệ"
+              title="Hỗ trợ"
               to="/adminContact"
-              icon={<ContactsOutlinedIcon />}
+              icon={<ContactSupportOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
+              style={{ fontFamily: 'Open Sans' }}
             />
             {/* <Item
               title="Calendar"

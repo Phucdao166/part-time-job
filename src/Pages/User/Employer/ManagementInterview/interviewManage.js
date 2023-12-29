@@ -8,26 +8,30 @@ import { ToastContainer, toast } from 'react-toastify';
 import React, { useState, useEffect } from 'react'
 import { CreateInterview, GetInterViewByEmpId, GetCandidateByInterviewId } from '../../../../Service/employService';
 import { EditLich, DeleteCandidateInterview } from '../../../../Service/interviewService';
-
+import { AddNotiForCandidate } from '../../../../Service/notificationService.js';
 function Interview() {
-
+    const currentDate = new Date().toISOString().split('T')[0];
     const [formInput, setFormInput] = useState({ start: '', end: '', date: '', accountId: 1 });
     const [request, setRequest] = useState({ start: '', end: '', date: '', accountId: 1 });
     const [MessageError, setMessageError] = useState('');
+    const [MessageError1, setMessageError1] = useState('');
     const [listJob, setListJob] = useState([]);
     const [listCandidate, setListCandidate] = useState([]);
     const [show, setShow] = useState(false);
     const [nameList, setNameList] = useState("");
     const [nameList1, setNameList1] = useState("");
     const [udpate, setupdate] = useState();
-
+    const [notification, setNotification] = useState({ accountId: '', fromAccountId: '', title: '', content: '' })
+    const tokenE = localStorage.getItem("tokenE");
     useEffect(() => {
         getInterview();
     }, [udpate])
-
+    useEffect(() => {
+    }, [tokenE])
+    
     const getInterview = async () => {
         const aId = sessionStorage.getItem("id");
-        let res = await GetInterViewByEmpId(aId);
+        let res = await GetInterViewByEmpId(aId,tokenE);
         if (res) {
             setListJob(res);
         }
@@ -39,7 +43,7 @@ function Interview() {
 
     const showDanhSachUngVien = async (id) => {
         console.log("id", id);
-        let res = await GetCandidateByInterviewId(id);
+        let res = await GetCandidateByInterviewId(id,tokenE);
         if (res) {
             setListCandidate(res);
         }
@@ -55,8 +59,9 @@ function Interview() {
         request.date = date;
         request.accountId = id;
         console.log("request", request)
-        let res = EditLich(request);
+        let res = EditLich(request,tokenE);
         console.log("DatLich", res);
+        setMessageError1("");
         toast.success("Bạn đã đổi lịch thành công");
     }
     const enableInputFields = (id) => {
@@ -75,6 +80,10 @@ function Interview() {
             thoiGianKetThucInput.readOnly = false;
             ngayPhongVanInput.readOnly = false;
         } else {
+            if (thoiGianBatDauInput.value > thoiGianKetThucInput.value) {
+                setMessageError1("Thời gian kết thúc phải lớn hơn");
+                return;
+            }
             DatLich(thoiGianBatDauInput.value, thoiGianKetThucInput.value, ngayPhongVanInput.value, id)
             doilichphongvan.innerText = "Đổi lịch"
             thoiGianBatDauInput.type = "text";
@@ -97,6 +106,10 @@ function Interview() {
         const thoiGianBatDauValue = thoiGianBatDauInput.value;
         const thoiGianKetThucValue = thoiGianKetThucInput.value;
         const ngayPhongVanValue = ngayPhongVanInput.value;
+        if (thoiGianBatDauValue > thoiGianKetThucValue) {
+            setMessageError("Thời gian kết thúc phải lớn hơn");
+            return;
+        }else
         if (thoiGianBatDauValue.length === 0 || thoiGianKetThucValue.length === 0 || ngayPhongVanValue.length === 0 || accountid === false) {
             setMessageError("Không để trống thông tin");
             return;
@@ -105,7 +118,7 @@ function Interview() {
             formInput.end = thoiGianKetThucValue;
             formInput.date = ngayPhongVanValue;
             formInput.accountId = accountid;
-            await CreateInterview(formInput);
+            await CreateInterview(formInput,tokenE);
             thoiGianBatDauInput.value = "";
             thoiGianKetThucInput.value = "";
             ngayPhongVanInput.value = "";
@@ -115,13 +128,18 @@ function Interview() {
         }
     }
 
-    const CancelInterview = async (id,interviewId) => {
+    const CancelInterview = async (id,interviewId,title,cid) => {
         const userConfirmed = window.confirm('Bạn có chắc hủy phỏng vấn không');
 
         // Nếu người dùng đồng ý, thực hiện xóa
         if (userConfirmed) {
-            let res = await DeleteCandidateInterview(id);
+            let res = await DeleteCandidateInterview(id,tokenE);
             if (res) {
+                notification.accountId = cid;
+                notification.fromAccountId = sessionStorage.getItem('idOfEmp');
+                notification.title = title + " thông báo";
+                notification.content = `Lịch phỏng vấn của bạn về: ${title} đã bị hủy. Xin lỗi về sự cố này cảm ơn `;
+                await AddNotiForCandidate(notification,tokenE);
                 showDanhSachUngVien(interviewId);
                 toast.success("Hủy phỏng vấn thành công");
             }
@@ -139,7 +157,7 @@ function Interview() {
                 <div className="employer-page-content">
                     <div className="interview-feedback">
                         <div className="interview-feedback-item">Đã tham gia phỏng vấn<i class="fa-solid fa-circle-info" id="interview-icon"></i><i class="fa-solid fa-circle-user" id="interview-icon"></i></div>
-                        <Button id="interview-btn" variant="primary">Đánh giá ứng viên</Button>
+                        <Button href="/candidate-manage?toggleTab=3" id="interview-btn" variant="primary">Đánh giá ứng viên</Button>
                     </div>
 
                     <div className="interview-search">
@@ -147,8 +165,6 @@ function Interview() {
                             <div className="interview-search-item-title">Thời gian bắt đầu</div>
                             <Form.Control
                                 type="time"
-                                onfocus="(this.type='date')"
-                                onblur="(this.type='text')"
                                 placeholder="Thời gian bắt đầu"
                                 required
                                 defaultValue
@@ -170,6 +186,7 @@ function Interview() {
                             <Form.Control
                                 id="datemain"
                                 type="date"
+                                min={currentDate}
                                 defaultValue
                                 required
                             />
@@ -217,6 +234,7 @@ function Interview() {
                                                     id={datepv + item.id}
                                                     defaultValue={item.date}
                                                     readOnly={true}
+                                                    min={currentDate}
                                                 /></td>
                                                 <td><Button variant="primary" id={item.id} onClick={() => enableInputFields(item.id)}>Đổi lịch</Button></td>
                                                 <td><Button variant="primary" onClick={() => showDanhSachUngVien(item.id)}>Xem</Button></td>
@@ -227,6 +245,7 @@ function Interview() {
 
                             </tbody>
                         </Table>
+                        <p className="error-message">{MessageError1}</p>
                     </div>
 
                     {/* Danh sách Phỏng vấn */}
@@ -239,6 +258,7 @@ function Interview() {
                                 <thead>
                                     <tr>
                                         <th style={{ padding: '10px', margin: 'auto', alignItems: 'center' }}>STT</th>
+                                        <th style={{ padding: '10px', margin: 'auto', alignItems: 'center' }}>Tên Công việc</th>
                                         <th style={{ padding: '20px', margin: 'auto', alignItems: 'center' }}>Họ và tên</th>
                                         <th style={{ padding: '20px', margin: 'auto', alignItems: 'center' }}>Liên hệ</th>
                                         <th style={{ padding: '20px', margin: 'auto', alignItems: 'center' }}>Ngày sinh</th>
@@ -252,6 +272,7 @@ function Interview() {
                                             return (
                                                 <tr>
                                                     <td>{index + 1}</td>
+                                                    <td>{item.title}</td>
                                                     <td>{item.fullname}</td>
                                                     <td>{item.phone}</td>
                                                     <td>{item.dob}</td>
@@ -259,7 +280,7 @@ function Interview() {
                                                     {item.status===6?(
                                                         <td><Button variant="primary" disabled>Ứng viên hủy</Button></td>
                                                     ):(
-                                                        <td><Button variant="primary" onClick={() => CancelInterview(item.id,item.interview)}>Hủy</Button></td>
+                                                        <td><Button variant="primary" onClick={() => CancelInterview(item.id,item.interview,item.title,item.jobApplicationId)}>Hủy</Button></td>
                                                     )}                                         
                                                 </tr>
                                             )

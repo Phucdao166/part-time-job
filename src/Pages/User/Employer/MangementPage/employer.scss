@@ -1,6 +1,7 @@
 .employer-page {
     display: flex;
     flex-wrap: wrap;
+    font-family: Open Sans;
 
     &-sidebar {
         margin-top: 85px;
@@ -38,7 +39,7 @@
 
 
             &-left {
-                width: 40%;
+                width: 55%;
                 display: flex;
                 flex-wrap: wrap;
 
@@ -52,6 +53,10 @@
                         background-color: #ffe8fb;
                         border-radius: 20px;
                         padding: 20px;
+                    }
+
+                    &-icon {
+                        width: 30%;
                     }
 
                     &-2 {
@@ -77,7 +82,7 @@
             }
 
             &-right {
-                width: 59%;
+                width: 44%;
                 height: 205px;
                 background-color: #fff;
                 border-radius: 20px;
@@ -86,11 +91,11 @@
                 display: flex;
 
                 &-notify {
-                    width: 50%;
+                    width: 70%;
 
-                    &-title{
+                    &-title {
                         font-weight: bold;
-                        font-size: 20px;
+                        font-size: 16px;
                     }
                 }
 
@@ -108,18 +113,19 @@
             flex-wrap: wrap;
             background-color: #fff;
             border-radius: 20px;
-            padding: 20px;
+            padding: 10px;
 
             &-item {
                 width: 20%;
                 margin: auto;
-                translate: 30px;
+                text-align: center;
 
                 &-title {
-                    font-size: 20px;
+                    font-size: 16px;
                     font-weight: bold;
                     margin-left: 5px;
                     margin-top: 10px;
+                    text-align: center;
                 }
             }
         }
@@ -132,7 +138,6 @@
         background-color: rgb(248 239 228);
         color: rgb(255 166 3);
         font-size: 55px;
-        translate: 25px;
         padding: 20px;
         border-radius: 20px;
         align-items: center;
@@ -142,7 +147,6 @@
         background-color: rgb(233 255 231);
         color: #0bd50b;
         font-size: 55px;
-        translate: 25px;
         padding: 20px;
         border-radius: 20px;
         align-items: center;
@@ -152,7 +156,6 @@
         background-color: rgb(251 232 253);
         color: #a759ef;
         font-size: 55px;
-        translate: 25px;
         padding: 20px;
         border-radius: 20px;
         align-items: center;
@@ -162,7 +165,6 @@
         background-color: rgb(222 222 255);
         color: #7979ff;
         font-size: 55px;
-        translate: 25px;
         padding: 20px;
         border-radius: 20px;
         align-items: center;
@@ -176,15 +178,16 @@
 }
 
 #icon-employer-managerment {
-    font-size: 21px;
+    font-size: 27px;
     padding: 10px;
     color: #d862d8;
     background-color: #efc9ef;
     border-radius: 50px;
-    translate: 0px 15px;
+    margin-left: 50px;
 }
 
 .sidebar {
+    font-family: Open Sans;
     position: fixed;
     top: 85px;
     left: 0;
@@ -201,12 +204,12 @@
             align-items: center;
             place-content: flex-start;
             padding: 1rem 3rem;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             color: #555555;
             // transition: color 0.1s ease-in-out;
 
-            &__text a{
+            &__text a {
                 text-decoration: none;
             }
 
@@ -230,10 +233,270 @@
             left: 50%;
             width: calc(100% - 40px);
             border-radius: 10px;
-            background-color: #0bd50b;
+            background-color: #00b14f;
             z-index: -1;
             transform: translateX(-50%);
             // transition: color 0.1s ease-in-out;
         }
     }
 }
+
+#emp-avt{
+    width: 90px;
+    height: 90px;
+    border-radius: 50px;
+}
+
+@media only screen and (max-width: 1400px) {
+    .employer-page-content-recruitment-right {
+        width: 43%;
+        height: 205px;
+        background-color: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        margin-left: 10px;
+        display: flex;
+        font-size: 14px;
+    }
+
+    #icon-employer-managerment {
+        font-size: 27px;
+        padding: 10px;
+        color: #d862d8;
+        background-color: #efc9ef;
+        border-radius: 50px;
+        margin-left: 17px;
+    }
+
+    .employer-page-content-recruitment-left-item-content {
+        font-size: 14px;
+    }
+
+    .employer-page-content-recruitment-left-item-2 {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 1179px) {
+    .employer-page-content-recruitment-right {
+        width: 43%;
+        height: 205px;
+        background-color: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        margin-left: 10px;
+        display: flex;
+        font-size: 14px;
+    }
+
+    #icon-employer-managerment {
+        font-size: 27px;
+        padding: 10px;
+        color: #d862d8;
+        background-color: #efc9ef;
+        border-radius: 50px;
+        margin-left: 17px;
+    }
+
+    .employer-page-content-recruitment-left-item-content {
+        font-size: 13px;
+    }
+
+    .employer-page-content-recruitment-left-item-2 {
+        font-size: 13px;
+    }
+
+    .employer-page-content-choice-item-title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-left: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+}
+
+@media only screen and (max-width: 1110px) {
+    .employer-page-content-recruitment-right {
+        width: 43%;
+        height: 205px;
+        background-color: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        margin-left: 10px;
+        display: flex;
+        font-size: 14px;
+    }
+
+    #icon-employer-managerment {
+        font-size: 27px;
+        padding: 10px;
+        color: #d862d8;
+        background-color: #efc9ef;
+        border-radius: 50px;
+        margin-left: 17px;
+    }
+
+    .employer-page-content-recruitment-left-item-content {
+        font-size: 15px;
+    }
+
+    .employer-page-content-recruitment-left-item-2 {
+        font-size: 15px;
+    }
+}
+
+@media only screen and (max-width: 1039px) {
+    .employer-page-content-recruitment-right {
+        width: 43%;
+        height: 205px;
+        background-color: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        margin-left: 10px;
+        display: flex;
+        font-size: 14px;
+    }
+
+    #icon-employer-managerment {
+        font-size: 27px;
+        padding: 10px;
+        color: #d862d8;
+        background-color: #efc9ef;
+        border-radius: 50px;
+        margin-left: 17px;
+    }
+
+    .employer-page-content-recruitment-left-item-content {
+        font-size: 15px;
+    }
+
+    .employer-page-content-recruitment-left-item-2 {
+        font-size: 15px;
+    }
+
+    .employer-page-content-recruitment-left-item-time {
+        width: 80%;
+    }
+
+    .employer-page-content-choice-item-title {
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+}
+
+@media only screen and (max-width: 1451px) {
+    .sidebar {
+        font-family: Open Sans;
+        position: fixed;
+        top: 85px;
+        left: 0;
+        height: 100vh;
+        width: 20%;
+        background-color: #fff;
+    
+        &__menu {
+            position: relative;
+            margin-top: 10px;
+    
+            &__item {
+                display: flex;
+                align-items: center;
+                place-content: flex-start;
+                padding: 1rem 3rem;
+                font-size: 14px;
+                font-weight: 500;
+                color: #555555;
+                // transition: color 0.1s ease-in-out;
+    
+                &__text a {
+                    text-decoration: none;
+                }
+    
+                &.active {
+                    color: #fff;
+                    font-weight: bold;
+                }
+    
+                &__icon {
+                    margin-right: 1rem;
+    
+                    i {
+                        font-size: 1.75rem;
+                    }
+                }
+            }
+    
+            &__indicator {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: calc(100% - 40px);
+                border-radius: 10px;
+                background-color: #00b14f;
+                z-index: -1;
+                transform: translateX(-50%);
+                // transition: color 0.1s ease-in-out;
+            }
+        }
+    }
+  }
+
+  @media only screen and (max-width: 1397px) {
+    .sidebar {
+        font-family: Open Sans;
+        position: fixed;
+        top: 85px;
+        left: 0;
+        height: 100vh;
+        width: 20%;
+        background-color: #fff;
+    
+        &__menu {
+            position: relative;
+            margin-top: 10px;
+    
+            &__item {
+                display: flex;
+                align-items: center;
+                place-content: flex-start;
+                padding: 1rem 3rem;
+                font-size: 12px;
+                font-weight: 500;
+                color: #555555;
+                // transition: color 0.1s ease-in-out;
+    
+                &__text a {
+                    text-decoration: none;
+                }
+    
+                &.active {
+                    color: #fff;
+                    font-weight: bold;
+                }
+    
+                &__icon {
+                    margin-right: 1rem;
+    
+                    i {
+                        font-size: 1.75rem;
+                    }
+                }
+            }
+    
+            &__indicator {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: calc(100% - 40px);
+                border-radius: 10px;
+                background-color: #00b14f;
+                z-index: -1;
+                transform: translateX(-50%);
+                // transition: color 0.1s ease-in-out;
+            }
+        }
+    }
+  }

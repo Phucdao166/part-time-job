@@ -21,7 +21,7 @@ export default function AdminApprovePost() {
             <Sidebar isSidebar={isSidebar} />
           </div>
           <div className="adminApprovePost-content-item">
-            <main className="">
+            <main className="" style={{ translate: 270 }}>
               <Topbar setIsSidebar={setIsSidebar} />
               <Routes>
                 <Route path="/" element={<ApprovePost />} />

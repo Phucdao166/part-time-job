@@ -5,17 +5,26 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import { useState } from "react";
 import { useEffect } from "react";
-import { createPost , createPosttinhanp} from '../../../../Service/employService'
+import { createPost, createPosttinhanp } from '../../../../Service/employService'
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import HeaderEmployer from "../../Themes/Header/headerEmployer";
 import { getCity } from '../../../../Service/candidateService';
 import { GetAllCate, GetAllJobType, GetAllJobTypeByCate } from '../../../../Service/searchService';
+import { eachDayOfInterval } from 'date-fns';
+function formatCurrency(value){
+    console.log("value",value);
+    return value.toLocaleString('vi-VN');
+
+  };
 function CreatePost() {
     const [empid, setEid] = useState(sessionStorage.getItem('employerId'));
     const [isAccepted, setIsAccepted] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValidNhap, setIsFormValidNhap] = useState(false);
     const currentDate = new Date().toISOString().split('T')[0];
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate1, setSelectedDate1] = useState(new Date());
     const navigate = useNavigate();
     const [listjobType, setListjobType] = useState([]);
     const [city, setCity] = useState([]);
@@ -23,7 +32,15 @@ function CreatePost() {
     const [RegisterRequest, setRegisterRequest] = useState({ city: '', district: '' });
     const [listcate, setlistcate] = useState([]);
     const [loading, Setloading] = useState();
-    const [error, setError] = useState('');
+    const [dayNumbers, setdayNumbers] = useState([]);
+    // const [isInitialDay1, setisInitialDay1] = useState(false);
+    const formatCurrency = (value) => {
+        return value.toLocaleString('vi-VN');
+    };
+    const [validInput, setValidInput] = useState(true);
+    const [fieldErrors, setFieldErrors] = useState({});
+    const tokenE = localStorage.getItem("tokenE");
+    console.log("localStorage.getItem", tokenE);
     const [formInputEmp, setFormInput] = useState({
         // "title": "job 4",
         title: "",
@@ -31,59 +48,29 @@ function CreatePost() {
         description: "",
         salary: "",
         location: "",
-        deadline: "2023-11-11T16:03:01.812Z",
-        createdAt: "2023-11-11T16:03:01.812Z",
+        deadline: "2023-12-28T16:03:01.812Z",
+        createdAt: "2023-12-28T16:03:01.812Z",
         jobTime: "",
-        checktypejob: 0,
         status: 0,
         jobTypeId: 1,
         experient: "Không yêu cầu",
-        rolecompany: 0,
         numberApply: 0,
         typeJob: 0,
-        daywork: "2023-11-11T16:03:01.812Z",
+        daywork: "2023-12-28T16:03:01.812Z",
         note: "",
-        dob: 0,
         toage: 0,
         levellearn: "Không yêu cầu",
         fromage: 0,
         welfare: "",
         moredesciption: "",
         typename: 0,
-        agreesalary: "",
         company: "",
-        typeSalary: ""
+        typeSalary: "",
+        startdate: "2023-12-28T16:03:01.812Z",
+        gender: "",
+        enddate: "2023-12-28T16:03:01.812Z",
     });
-    const [formInputtinnhap, setFormInputinnhap] = useState({
-        // "title": "job 4",
-        title: "",
-        employerId: empid,
-        description: "",
-        salary: "",
-        location: "",
-        deadline: "2023-11-11T16:03:01.812Z",
-        createdAt: "2023-11-11T16:03:01.812Z",
-        jobTime: "",
-        checktypejob: 0,
-        status: 4,
-        jobTypeId: 1,
-        experient: "Không yêu cầu",
-        rolecompany: 0,
-        numberApply: 0,
-        typeJob: 0,
-        daywork: "2023-11-11T16:03:01.812Z",
-        note: "",
-        dob: 0,
-        toage: 0,
-        levellearn: "Không yêu cầu",
-        fromage: 0,
-        welfare: "",
-        moredesciption: "",
-        typename: 0,
-        agreesalary: "",
-        company: "",
-        typeSalary: ""
-    });
+
     useEffect(() => {
         // const employid = sessionStorage.getItem("employId");
         console.log("empid", empid);
@@ -128,6 +115,14 @@ function CreatePost() {
         console.log("Updated districts", distric);
     };
 
+    // useEffect(() => {
+    //     if (formInputEmp.company.length > 5) {
+    //       setError('Văn bản vượt quá giới hạn ký tự.');
+    //     } else {
+    //       setError('');
+    //     }
+    //   }, [formInputEmp, error]);
+
     const handleChange = async (e) => {
         const { name, value } = e.target;
         await setRegisterRequest({ ...RegisterRequest, [name]: value });
@@ -135,13 +130,113 @@ function CreatePost() {
     // const handleEmployInput = (name, value) => {
     //     setFormInput({ ...formInputEmp, [name]: value });
     // };
+
+    // const dayNumbers = null;
     const handleEmployInput = (name, value) => {
-        // Cập nhật giá trị vào đối tượng formInputEmp
-        setFormInput((prevFormInputEmp) => ({
-            ...prevFormInputEmp,
-            [name]: value,
-        }));
-        setError(''); // Clear the error message
+        const updatedFormInputEmp = {
+            ...formInputEmp,
+            [name]: value
+        };
+        let updatedFieldErrors = { ...fieldErrors };
+
+        if (name === 'enddate') {
+            const startDate = new Date(formInputEmp.startdate);
+            const endDate = new Date(value);
+            const daysInRange1 = eachDayOfInterval({ start: startDate, end: endDate });
+            setdayNumbers(daysInRange1.map(day => day.getDay() === 0 ? 7 : day.getDay())); // Chuyển 0 (Chủ nhật) thành 7
+            console.log("setdayNumbers", dayNumbers);
+        }
+        if (name === 'startdate') {
+            if (formInputEmp.typeJob === 2) {
+                const currentDate = new Date(value);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                // const newDate = addMonths(startDate, 1);
+                setSelectedDate(maxDate);
+            } else if (formInputEmp.typeJob === 1) {
+                // const newDate = addDays(startDate, 1);
+                // const newDate1 = addMonths(startDate, 1);
+                const currentDate = new Date(value);
+                const currentDate1 = new Date(value);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                currentDate1.setDate(currentDate1.getDate() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                const maxDate1 = currentDate1.toISOString().split('T')[0];
+                setSelectedDate(maxDate);
+                setSelectedDate1(maxDate1);
+                console.log("setSelectedDate", maxDate);
+                console.log("setSelectedDate1", maxDate1);
+            }
+        }
+        if (name === 'typeJob') {
+            if (value === 2) {
+                const currentDate = new Date(formInputEmp.startdate);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                // const newDate = addMonths(startDate, 1);
+                setSelectedDate(maxDate);
+            } else if (value === 1) {
+                // const newDate = addDays(startDate, 1);
+                // const newDate1 = addMonths(startDate, 1);
+                const currentDate = new Date(formInputEmp.startdate);
+                const currentDate1 = new Date(formInputEmp.startdate);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                currentDate1.setDate(currentDate1.getDate() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                const maxDate1 = currentDate1.toISOString().split('T')[0];
+                setSelectedDate(maxDate);
+                setSelectedDate1(maxDate1);
+                console.log("setSelectedDate", maxDate);
+                console.log("setSelectedDate1", maxDate1);
+            }
+        }
+        if ((name === 'description' || name === 'moredesciption') && value.length > 500) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        } else if ((name === 'title' || name === "note" || name === 'location' || name === 'jobTime'
+            || name === 'company' || name === 'welfare') && value.length > 80) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        }
+        else if ((name === '' || name === "" || name === '' || name === ''
+            || name === '' || name === '')) {
+            updatedFieldErrors[name] = 'Không thế để trống';
+            setValidInput(false);
+        }
+        else if (name === 'fromage' && (parseInt(value) <= parseInt(formInputEmp.toage))) {
+            updatedFieldErrors[name] = 'Giá trị "Đến" phải lớn hơn giá trị "Từ".';
+            setValidInput(false);
+        } else if (name === "salary" && value.length > 9) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        } else if (name === "numberApply" && value.length > 3) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        }
+        else if ((name === "fromage" || name === "toage") && value.length > 2) {
+            updatedFieldErrors[name] = 'Tuổi vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        } else if ((name === "fromage" || name === "toage") && value < 15) {
+            updatedFieldErrors[name] = 'Độ tuổi tối thiểu là 15 tuổi.';
+            setValidInput(false);
+        }
+        else {
+            setValidInput(true);
+            delete updatedFieldErrors[name];
+        }
+        console.log("updatedFieldErrors", updatedFieldErrors);
+        setFieldErrors(updatedFieldErrors);
+
+        if (name === 'fromage') {
+            setFormInput(updatedFormInputEmp);
+        }
+        if (name === 'toage') {
+            setFormInput(updatedFormInputEmp);
+        }
+        if (Object.keys(updatedFieldErrors).length === 0 && validInput) {
+            setFormInput(updatedFormInputEmp);
+        }
+
     };
     const handleEmployInput1 = (name, value) => {
         // Cập nhật giá trị vào đối tượng formInputEmp
@@ -150,9 +245,9 @@ function CreatePost() {
             [name]: value,
         }));
         console.log("Cate", value);
+
         getJobtype1(value);
     };
-
     useEffect(() => {
         const isFormValid =
             formInputEmp.title !== "" &&
@@ -166,66 +261,103 @@ function CreatePost() {
             formInputEmp.jobTime !== "" &&
             formInputEmp.status !== null &&
             formInputEmp.jobTypeId !== null &&
-            formInputEmp.numberApply !== null &&
+            formInputEmp.numberApply !== 0 &&
             formInputEmp.daywork !== "" &&
             formInputEmp.note !== "" &&
             formInputEmp.toage !== null &&
             formInputEmp.fromage !== null &&
-            formInputEmp.moredesciption !== "" &&
             formInputEmp.typename !== null &&
             formInputEmp.company !== "" &&
-            formInputEmp.typeSalary !== "";
+            formInputEmp.typeSalary !== "" &&
+            formInputEmp.startdate !== null &&
+            formInputEmp.enddate !== null;
 
         setIsFormValid(isFormValid);
+
+        const isFormValid1 =
+            formInputEmp.title !== "";
+
+        setIsFormValidNhap(isFormValid1);
+
         if (formInputEmp.typeJob !== 0) {
             formInputEmp.daywork = getSelectedDaysString();
         }
         console.log("formInputEmp.daywork", formInputEmp.daywork);
         console.log("formInputEmp", formInputEmp);
+
     }, [formInputEmp]);
 
-   const handleSubmitinnhap = async (event) =>{
-    const creatPostNew = await createPosttinhanp(formInputtinnhap);
-                console.log("newpostnhap", creatPostNew);
-                if (creatPostNew) {
-                    setFormInputinnhap(creatPostNew);
-                    //toast.success("Tạo công việc thành công!");
-                    navigate("/post-wrap?toast=1");
-                } else {
-                    console.log("API call failed");
-                    toast.error("Đã xảy ra lỗi trong quá trình tạo công việc!");
-                }
-   }
+    const handleSubmitinnhap = async (event) => {
+        if (!isFormValidNhap) {
+            console.log("Invalid form");
+            // navigate("/add-post");
+            toast.error("Tin nháp phải có tên tiêu đề");
+            return;
+        }
+        formInputEmp.status = 4;
+        event.preventDefault();
+        try {
+            if (formInputEmp.location && formInputEmp.location.length > 0) {
+                formInputEmp.location = formInputEmp.location + "," + RegisterRequest.district + "," + RegisterRequest.city
+                console.log("formInputEmp.location", formInputEmp.location);
+            }
+            else {
+                formInputEmp.location = RegisterRequest.district + "," + RegisterRequest.city
+            }
+            console.log("formInputEmp", formInputEmp);
+            const creatPostNew = await createPosttinhanp(formInputEmp, tokenE);
+            console.log("newpostnhap", creatPostNew);
+
+            if (creatPostNew) {
+                setFormInput(formInputEmp);
+                //toast.success("Tạo công việc thành công!");
+                navigate("/post?tinnhap=1");
+            } else {
+                console.log("API call failed");
+                toast.error("Đã xảy ra lỗi trong quá trình tạo công việc!");
+            }
+        } catch (error) {
+            console.log("API call error:", error);
+            toast.error("Đã xảy ra lỗi trong quá trình tạo công việc!");
+        }
+    }
+    const isValidJobTime = (jobtime) => {
+        // Sử dụng biểu thức chính quy để kiểm tra định dạng
+        const regex = /^(0[0-9]|1[0-9]|2[0-3])h-(0[0-9]|1[0-9]|2[0-3])h$/;
+        return regex.test(jobtime);
+    };
     const handleSubmit = async (event) => {
 
-        console.log("formInputEmp", formInputEmp);
         event.preventDefault();
-
-        if (!isFormValid) {
+        if (isValidJobTime(isFormValid.jobTime)) {
             console.log("Invalid form");
             navigate("/add-post");
+            toast.error("Vui lòng nhập đúng định dạng thời gian làm việc");
+            return;
+        }
+        if (!isFormValid) {
+            console.log("Invalid form");
+            // navigate("/add-post");
             toast.error("Vui lòng điền đầy đủ thông tin!");
+            return;
         } else {
             try {
                 if (formInputEmp.location && formInputEmp.location.length > 0) {
                     formInputEmp.location = formInputEmp.location + "," + RegisterRequest.district + "," + RegisterRequest.city
                     console.log("formInputEmp.location", formInputEmp.location);
-                }else if (formInputEmp.fromage < formInputEmp.toage) {
-                    setError('The "fromage" value must be greater than the "toage" value.');
-                    return;
-                  }
+                }
                 else {
                     formInputEmp.location = RegisterRequest.district + "," + RegisterRequest.city
                 }
                 console.log("formInputEmp", formInputEmp);
-                const creatPostNew = await createPost(formInputEmp);
+                const creatPostNew = await createPost(formInputEmp, tokenE);
                 console.log("creatPostNew", creatPostNew);
 
                 if (creatPostNew) {
                     setFormInput(creatPostNew);
                     //toast.success("Tạo công việc thành công!");
 
-                    navigate("/post-manage?toast=1");
+                    navigate("/post?toast=1");
                 } else {
                     console.log("API call failed");
                     toast.error("Đã xảy ra lỗi trong quá trình tạo công việc!");
@@ -258,28 +390,31 @@ function CreatePost() {
     );
 
     console.log("VN", VND.format("200454"))
+    // Tạo mảng chứa các ngày trong khoảng thời gian từ startDate đến endDate
 
     return (
-
         <>
             <HeaderEmployer />
             <div className="employer-page">
                 <div className="create-post-content">
-                    <div className="create-post">
+                    <div className="create-post-info">
                         <div className="create-post-top">Tạo bài đăng</div>
-                        <div className="create-post-choose-role">                          
-                            <div className="create-post-title">Tên cửa hàng/Công ty<img id='require-icon' src={require_icon} alt="" /></div>
-                            <Form.Control
-                                id="create-post-title"
-                                type="text"
-                                placeholder="Bơ Bán Bò"
-                                name="company"
-                                onChange={({ target }) => {
-                                    handleEmployInput(target.name, target.value);
-                                }}
-                                value={formInputEmp.company}
-                            />
-                        </div>
+                        {/* <div className="create-post-choose-role"> */}
+                        <div className="create-post-title">Tên cửa hàng/Công ty<img id='require-icon' src={require_icon} alt="" /></div>
+
+                        <Form.Control
+                            id="create-post-title"
+                            type="text"
+                            maxLength={50}
+                            placeholder="Bơ Bán Bò"
+                            name="company"
+                            onChange={({ target }) => {
+                                handleEmployInput(target.name, target.value);
+                            }}
+                            value={formInputEmp.company}
+                        />
+                        {fieldErrors.company && <p style={{ color: 'red' }}>{fieldErrors.company}*</p>}
+                        {/* </div> */}
                     </div>
                     <div className="create-post-info">
                         <div>
@@ -293,7 +428,9 @@ function CreatePost() {
                                     handleEmployInput(target.name, target.value);
                                 }}
                                 value={formInputEmp.title}
+
                             />
+                            {fieldErrors.title && <p style={{ color: 'red' }}>{fieldErrors.title}*</p>}
                         </div>
                         <div className="create-post-info-job">
                             <div className="create-post-info-job-left">
@@ -338,23 +475,33 @@ function CreatePost() {
                                 <div className="create-post-choose-role">
                                     <div className="create-post-title">Mức lương<img id='require-icon' src={require_icon} alt="" /></div>
                                     <div className="create-post-role">
-                                        <div className="create-post-role-radio"><input type="number" name="salary" onChange={({ target }) => {
-                                            let value = target.value;
-    
-                                            // Loại bỏ số 0 ban đầu nếu có
-                                            if (value.length > 0 && value[0] === '0') {
-                                              value = value.slice(1);
-                                            }
-                                            
-                                            // Kiểm tra và không cho phép giá trị âm
-                                            if (value < 0) {
-                                              value = '';
-                                            }
-                                            handleEmployInput(target.name, value);
-                                        }}
-                                            placeholder=""
-                                            value={formInputEmp.salary}
-                                        />
+                                        <div className="create-post-role-radio">
+                                            <input type="number" name="salary"
+                                                onKeyPress={(event) => {
+                                                    const keyCode = event.which || event.keyCode;
+                                                    const invalidCharacters = /[^0-9]/;
+
+                                                    if (keyCode !== 8 && keyCode !== 0 && invalidCharacters.test(event.key)) {
+                                                        event.preventDefault();
+                                                    }
+                                                }}
+                                                onChange={({ target }) => {
+                                                    let value = target.value;
+                                                    // Loại bỏ số 0 ban đầu nếu có
+                                                    if (value.length > 0 && value[0] === '0') {
+                                                        value = value.slice(1);
+                                                    }
+
+                                                    // Kiểm tra và không cho phép giá trị âm
+                                                    if (value < 0) {
+                                                        value = '';
+                                                    }
+                                                    handleEmployInput(target.name, value);
+                                                }}
+                                                placeholder=""
+                                                value={formatCurrency(formInputEmp.salary)}
+                                            />
+                                            {fieldErrors.salary && <p style={{ color: 'red' }}>{fieldErrors.salary}*</p>}
                                             <div className="create-post-role">
                                                 <div className="create-post-role-radio"><input type="radio"
                                                     name="typeSalary"
@@ -377,6 +524,7 @@ function CreatePost() {
                                                     onChange={({ target }) => {
                                                         handleEmployInput(target.name, target.value);
                                                     }}
+                                                    disabled={formInputEmp.typeJob === 2 ? false : true}
                                                     checked={formInputEmp.typeSalary === "Tháng"}
                                                     value="Tháng"
                                                 />Tháng</div>
@@ -430,17 +578,25 @@ function CreatePost() {
                                         id="create-post-title"
                                         type="number"
                                         name="numberApply"
+                                        onKeyPress={(event) => {
+                                            const keyCode = event.which || event.keyCode;
+                                            const invalidCharacters = /[^0-9]/;
+
+                                            if (keyCode !== 8 && keyCode !== 0 && invalidCharacters.test(event.key)) {
+                                                event.preventDefault();
+                                            }
+                                        }}
                                         onChange={({ target }) => {
                                             let value = target.value;
-    
+
                                             // Loại bỏ số 0 ban đầu nếu có
                                             if (value.length > 0 && value[0] === '0') {
-                                              value = value.slice(1);
+                                                value = value.slice(1);
                                             }
-                                            
+
                                             // Kiểm tra và không cho phép giá trị âm
                                             if (value < 0) {
-                                              value = '';
+                                                value = '';
                                             }
                                             handleEmployInput(target.name, value);
                                         }}
@@ -478,7 +634,7 @@ function CreatePost() {
                                 </div>
                                 {formInputEmp.typeJob === 0 ? (
                                     <div className="create-post-choose-role">
-                                        <div className="create-post-title">Ngày làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                        <div className="create-post-title">Ngày làm <img id='require-icon' src={require_icon} alt="" /></div>
                                         <Form.Control
                                             onChange={({ target }) => {
                                                 handleEmployInput(target.name, target.value);
@@ -491,60 +647,138 @@ function CreatePost() {
                                             value={formInputEmp.daywork}
                                             required
                                         />
+                                        <div className="create-post-choose-role">
+                                            <div className="create-post-title">Hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
+                                            <Form.Control
+                                                onChange={({ target }) => {
+                                                    handleEmployInput(target.name, target.value);
+                                                }}
+                                                placeholder="dd/MM/YYYY"
+                                                id="datemain"
+                                                type="date"
+                                                name="deadline"
+                                                min={currentDate}
+                                                max={formInputEmp.daywork}
+                                                value={formInputEmp.deadline}
+                                                required
+                                            />
+                                        </div>
                                     </div>
                                 ) : (
                                     <div>
-                                        <div className="create-post-title">Ngày làm việc<img id='require-icon' src={require_icon} alt="" /></div>
+                                        <div className="create-post-title">Ngày làm việc trong tuần<img id='require-icon' src={require_icon} alt="" /></div>
                                         <div className="create-post-role">
-                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(day => (
-                                                <div key={day} className="create-post-role-radio">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="daywork"
-                                                        value={day}
-                                                        onChange={({ target }) => {
-                                                            handleEmployInputx(target.name, target.value);
-                                                        }}
-                                                        checked={selectedDays.includes(day.toString())}
-                                                    />
-                                                    {day === 1 ? 'Tất cả' : day === 8 ? 'Chủ nhật' : `Thứ ${day}`}
-                                                </div>
-                                            ))}
+                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(day => {
+                                                // const currentDay = new Date(`2023-12-${day}`);
+                                                let isInitialDay1 = false;
+                                                if (dayNumbers.length > 0) {
+                                                    isInitialDay1 = dayNumbers.includes(parseInt(day - 1));
+                                                    if (dayNumbers.length >= 7) {
+                                                        isInitialDay1 = true;
+                                                    }
+                                                }
+
+                                                return (
+                                                    <div key={day} className="create-post-role-radio">
+                                                        {/* <p>{isInitialDay1 ? (<div>true{dayNumbers[0]}</div>) : (<div>false{dayNumbers[0]}</div>)}</p> */}
+                                                        <input
+                                                            type="checkbox"
+                                                            name="daywork"
+                                                            value={day}
+                                                            onChange={({ target }) => {
+                                                                handleEmployInputx(target.name, target.value);
+                                                            }}
+                                                            checked={selectedDays.includes(day.toString())}
+                                                            disabled={!isInitialDay1}
+                                                        />
+                                                        {day === 1 ? 'Tất cả' : day === 8 ? 'Chủ nhật' : `Thứ ${day}`}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        <div className="create-post-title">Ngày bắt đầu làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                        <Form.Control
+                                            onChange={({ target }) => {
+                                                handleEmployInput(target.name, target.value);
+                                            }}
+                                            placeholder="dd/MM/YYYY"
+                                            id="datemain"
+                                            type="date"
+                                            name="startdate"
+                                            min={currentDate}
+                                            value={formInputEmp.startdate}
+                                            required
+                                        />
+                                        {formInputEmp.typeJob === 2 ? (
+                                            <div>
+                                                <div className="create-post-title">Ngày kết thúc làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Control
+                                                    onChange={({ target }) => {
+                                                        handleEmployInput(target.name, target.value);
+                                                    }}
+                                                    placeholder="dd/MM/YYYY"
+                                                    id="datemain"
+                                                    type="date"
+                                                    name="enddate"
+                                                    min={selectedDate}
+                                                    value={formInputEmp.enddate}
+                                                    required
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <div className="create-post-title">Ngày kết thúc làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Control
+                                                    onChange={({ target }) => {
+                                                        handleEmployInput(target.name, target.value);
+                                                    }}
+                                                    placeholder="dd/MM/YYYY"
+                                                    id="datemain"
+                                                    type="date"
+                                                    name="enddate"
+                                                    min={selectedDate1}
+                                                    max={selectedDate}
+                                                    value={formInputEmp.enddate}
+                                                    required
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="create-post-choose-role">
+                                            <div className="create-post-title">Hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
+                                            <Form.Control
+                                                onChange={({ target }) => {
+                                                    handleEmployInput(target.name, target.value);
+                                                }}
+                                                placeholder="dd/MM/YYYY"
+                                                id="datemain"
+                                                type="date"
+                                                name="deadline"
+                                                min={currentDate}
+                                                max={formInputEmp.startdate}
+                                                value={formInputEmp.deadline}
+                                                required
+                                            />
                                         </div>
                                     </div>
-
                                 )}
 
                                 <div className="create-post-choose-role">
-                                    <div className="create-post-title">Nhập thời gian làm việc trong ngày<img id='require-icon' src={require_icon} alt="" /></div>
+                                    <div className="create-post-title">Nhập thời gian làm việc trong ngày: 06h-09h<img id='require-icon' src={require_icon} alt="" /></div>
                                     <div className="create-post-role">
                                         <Form.Control
                                             id="create-post-title"
                                             type="text"
-                                            placeholder="7h-10h và 14h-17"
+                                            placeholder="07h-10h và 14h-17"
                                             name="jobTime"
                                             onChange={({ target }) => {
                                                 handleEmployInput(target.name, target.value);
                                             }}
                                             value={formInputEmp.jobTime}
                                         />
+                                        {fieldErrors.jobTime && <p style={{ color: 'red' }}>{fieldErrors.jobTime}*</p>}
                                     </div>
                                 </div>
-                                <div className="create-post-choose-role">
-                                    <div className="create-post-title">Thời hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
-                                    <Form.Control
-                                        onChange={({ target }) => {
-                                            handleEmployInput(target.name, target.value);
-                                        }}
-                                        placeholder="dd/MM/YYYY"
-                                        id="datemain"
-                                        type="date"
-                                        name="deadline"
-                                        min={currentDate}
-                                        value={formInputEmp.deadline}
-                                        required
-                                    />
-                                </div>
+
                             </div>
                         </div>
                         <div>
@@ -559,6 +793,7 @@ function CreatePost() {
                                 value={formInputEmp.location}
                                 placeholder="Số 10 Phạm Hùng"
                             />
+                            {fieldErrors.location && <p style={{ color: 'red' }}>{fieldErrors.location}*</p>}
                         </div>
                     </div>
 
@@ -589,6 +824,7 @@ function CreatePost() {
                                 name="description"
                                 placeholder="Mô tả công việc"
                             />
+                            {fieldErrors.description && <p style={{ color: 'red' }}>{fieldErrors.description}*</p>}
                         </div>
                     </div>
 
@@ -596,31 +832,31 @@ function CreatePost() {
                         <div className="create-post-info-job">
                             <div className="create-post-info-job-left">
                                 <div className="create-post-choose-role">
-                                    <div className="create-post-title">Giới tính <span></span></div>
+                                    <div className="create-post-title">Giới tính <img id='require-icon' src={require_icon} alt="" /><span></span></div>
                                     <div className="create-post-role">
                                         <div className="create-post-role-radio"><input type="radio"
-                                            name="dob"
+                                            name="gender"
                                             onChange={({ target }) => {
-                                                handleEmployInput(target.name, parseInt(target.value));
+                                                handleEmployInput(target.name, target.value);
                                             }}
-                                            checked={formInputEmp.dob === 1}
-                                            value={1}
+                                            checked={formInputEmp.gender === "Nam"}
+                                            value="Nam"
                                         />Nam</div>
                                         <div className="create-post-role-radio"><input type="radio"
-                                            name="dob"
+                                            name="gender"
                                             onChange={({ target }) => {
-                                                handleEmployInput(target.name, parseInt(target.value));
+                                                handleEmployInput(target.name, target.value);
                                             }}
-                                            checked={formInputEmp.dob === 0}
-                                            value={0}
+                                            checked={formInputEmp.gender === "Nữ"}
+                                            value="Nữ"
                                         />Nữ</div>
                                         <div className="create-post-role-radio"><input type="radio"
-                                            name="dob"
+                                            name="gender"
                                             onChange={({ target }) => {
-                                                handleEmployInput(target.name, parseInt(target.value));
+                                                handleEmployInput(target.name, target.value);
                                             }}
-                                            checked={formInputEmp.dob === 3}
-                                            value={3}
+                                            checked={formInputEmp.gender === "Bất kỳ"}
+                                            value="Bất kỳ"
                                         />Không yêu cầu</div>
                                     </div>
                                 </div>
@@ -653,8 +889,26 @@ function CreatePost() {
                                                     id="toage"
                                                     type="number"
                                                     name="toage"
+                                                    onKeyPress={(event) => {
+                                                        const keyCode = event.which || event.keyCode;
+                                                        const invalidCharacters = /[^0-9]/;
+
+                                                        if (keyCode !== 8 && keyCode !== 0 && invalidCharacters.test(event.key)) {
+                                                            event.preventDefault();
+                                                        }
+                                                    }}
                                                     onChange={({ target }) => {
-                                                        const value = Math.max(0, target.value); // Kiểm tra và không cho phép giá trị âm
+                                                        let value = target.value;
+
+                                                        // Loại bỏ số 0 ban đầu nếu có
+                                                        if (value.length > 0 && value[0] === '0') {
+                                                            value = value.slice(1);
+                                                        }
+
+                                                        // Kiểm tra và không cho phép giá trị âm
+                                                        if (value < 0) {
+                                                            value = '';
+                                                        }
                                                         handleEmployInput(target.name, value);
                                                     }}
                                                     value={formInputEmp.toage}
@@ -668,15 +922,37 @@ function CreatePost() {
                                                     id="fromage"
                                                     type="number"
                                                     name="fromage"
+                                                    onKeyPress={(event) => {
+                                                        const keyCode = event.which || event.keyCode;
+                                                        const invalidCharacters = /[^0-9]/;
+
+                                                        if (keyCode !== 8 && keyCode !== 0 && invalidCharacters.test(event.key)) {
+                                                            event.preventDefault();
+                                                        }
+                                                    }}
                                                     onChange={({ target }) => {
-                                                        const value = Math.max(0, target.value); // Kiểm tra và không cho phép giá trị âm
+                                                        let value = target.value;
+
+                                                        // Loại bỏ số 0 ban đầu nếu có
+                                                        if (value.length > 0 && value[0] === '0') {
+                                                            value = value.slice(1);
+                                                        }
+
+                                                        // Kiểm tra và không cho phép giá trị âm
+                                                        if (value < 0) {
+                                                            value = '';
+                                                        }
                                                         handleEmployInput(target.name, value);
+
                                                     }}
                                                     value={formInputEmp.fromage}
                                                 />
                                             </InputGroup>
                                         </div>
+
                                     </div>
+                                    {fieldErrors.fromage && <p style={{ color: 'red' }}>{fieldErrors.fromage}</p>}
+                                    {fieldErrors.toage && <p style={{ color: 'red' }}>{fieldErrors.toage}</p>}
                                 </div>
                                 <div className="create-post-choose-role">
                                     <div className="create-post-title">Kinh nghiệm <span>(Để trống nếu không yêu cầu)</span></div>
@@ -713,7 +989,8 @@ function CreatePost() {
                             value={formInputEmp.welfare}
                             placeholder="Ghi chú"
                         />
-                        <div className="create-post-title">Yêu cầu thêm <img id='require-icon' src={require_icon} alt="" /></div>
+                        {fieldErrors.welfare && <p style={{ color: 'red' }}>{fieldErrors.welfare}*</p>}
+                        <div className="create-post-title">Yêu cầu thêm</div>
                         <Form.Control
                             id="create-post-des"
                             type="text"
@@ -723,13 +1000,13 @@ function CreatePost() {
                             value={formInputEmp.moredesciption}
                             placeholder="Mô tả công việc"
                         />
+                        {fieldErrors.moredesciption && <p style={{ color: 'red' }}>{fieldErrors.moredesciption}*</p>}
 
                     </div>
 
                     <div>
-                    {error && <p className="error-message">{error}</p>}
-                    <Button id="create-post-btn" onClick={handleSubmit} variant="info">Đăng bài</Button>
-                        <Button id="create-post-btn" onClick={handleSubmitinnhap} variant="info">Lưu nhap</Button>
+                        <Button id="create-post-btn" onClick={handleSubmit} variant="info">Đăng bài</Button>
+                        <Button id="create-post-btn" onClick={handleSubmitinnhap} variant="info">Lưu nháp</Button>
                         <ToastContainer />
                     </div>
                 </div>

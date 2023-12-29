@@ -2,7 +2,9 @@ import axios from "axios";
 
 
 const instance = axios.create({
-    baseURL: 'http://localhost:5000/api'
+    baseURL: 'http://localhost:5000/api',
+    // baseURL: 'https://sacred-mastodon-just.ngrok-free.app/api',
+    // headers: { 'ngrok-skip-browser-warning': '1' }
 });
 
 instance.interceptors.response.use(function (response) {

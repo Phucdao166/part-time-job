@@ -13,7 +13,7 @@ function ChooseRole() {
           Nhà tuyển dụng
         </Button>
       </div>
-      <div className="back-login"><a href="/login">Quay lại</a></div>
+      <div className="back-login"><a href="/">Trang chủ</a></div>
     </div>
   );
 }

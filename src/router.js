@@ -4,7 +4,6 @@ import Login from "./Pages/Common/Login/login";
 import ChooseRole from "./Pages/Common/Register/chooseRole";
 import RegisterEmployer from "./Pages/Common/Register/registerForEmployer";
 import HomePage from "./Pages/User/HomePage";
-import ListJob from "./Pages/User/Job/listJob";
 import Job from "./Pages/User/Job/job";
 import JobDetail from "./Pages/User/Job/jobDetail"
 import ChangePass from "./Pages/User/Profile/changePass";
@@ -15,9 +14,8 @@ import Profilemp from "./Pages/User/Profile/profilemp";
 import StatusFindJob from "./Pages/User/Job/JobManage/statusFindJob";
 import MasterLayout from "./Pages/User/Themes/MasterLayout/masterLayout";
 import CV from "./Pages/User/CV/cv";
-import AboutUs from "./Pages/User/AboutUs/AboutUs";
+import CVGenarel from "./Pages/User/CV/cvGenarel";
 import Contact from "./Pages/User/Contact/Contact";
-import Company from "./Pages/User/Company/company";
 import RegisterCandidate from "./Pages/Common/Register/registerFofCandidate";
 import Verify from "./Pages/Common/Verify/verify";
 import Otp from "./Pages/Common/Verify/otpCode";
@@ -46,7 +44,9 @@ import AdminManageUser from "./Pages/Admin/adminManageUser";
 import ViewPost from "./Pages/User/Employer/ManagementPost/viewPost";
 import AdminContact from "./Pages/Admin/adminContact";
 import AdminApprovePost from "./Pages/Admin/adminApprovePost";
+import AdminBlacklist from "./Pages/Admin/adminBlacklist";
 import TinNhapPost from './Pages/User/Employer/ManagementPost/tinnhapPost';
+import PostDetailForAdmin from "./Pages/User/Employer/ManagementPost/postDetailForAdmin";
 
 const renderUserRouter = () => {
     const Routers = [
@@ -77,10 +77,6 @@ const renderUserRouter = () => {
         {
             path: ROUTERS.USER.CHOOSEROLE,
             component: <ChooseRole />,
-        },
-        {
-            path: ROUTERS.USER.LISTJOB,
-            component: <ListJob />,
         },
         {
             path: ROUTERS.USER.JOB,
@@ -123,16 +119,12 @@ const renderUserRouter = () => {
             component: <CV />,
         },
         {
+            path: ROUTERS.USER.CVGenarel,
+            component: <CVGenarel />,
+        },
+        {
             path: ROUTERS.USER.CONTACT,
             component: <Contact />,
-        },
-        {
-            path: ROUTERS.USER.ABOUTUS,
-            component: <AboutUs />,
-        },
-        {
-            path: ROUTERS.USER.COMPANY,
-            component: <Company />,
         },
         {
             path: ROUTERS.USER.VERIFY,
@@ -191,6 +183,10 @@ const renderUserRouter = () => {
             component: <PostDetail />,
         },
         {
+            path: ROUTERS.USER.POSTDETAILFORADMIN,
+            component: <PostDetailForAdmin />,
+        },
+        {
             path: ROUTERS.USER.CANDIDATEMANAGE,
             component: <CandidateManage />,
         },
@@ -233,6 +229,10 @@ const renderUserRouter = () => {
         {
             path: ROUTERS.ADMIN.ADMINMAPPROVEPOST,
             component: <AdminApprovePost />,
+        },
+        {
+            path: ROUTERS.ADMIN.ADMINBLACKLIST,
+            component: <AdminBlacklist />,
         },
     ]
 

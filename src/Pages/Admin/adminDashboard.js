@@ -21,7 +21,7 @@ export default function AdminDashboard() {
             <Sidebar isSidebar={isSidebar} />
           </div>
           <div className="adminDashboard-content">
-            <main className="adminDashboard-content-item">
+            <main className="adminDashboard-content-item" style={{ translate: 270 }}>
               <Topbar setIsSidebar={setIsSidebar} />
               <Routes>
                 <Route path="/" element={<Dashboard />} />

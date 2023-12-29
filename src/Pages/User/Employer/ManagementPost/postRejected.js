@@ -1,4 +1,4 @@
-import Header from "../../Themes/Header/header";
+import Header from "../../Themes/Header/headerEmployer";
 import SideBar from "../MangementPage/sidebar";
 import Button from 'react-bootstrap/Button';
 import logo_job from '../../../../Assets/logo-job.png'

@@ -11,24 +11,22 @@ function OtpRegister() {
     const [MessageError, setMessageError] = useState('');
     // Hàm xử lý khi giá trị của ô input thay đổi
     const handleOtpChange = (e) => {
-      setOtp(e.target.value);
-      
+        setOtp(e.target.value);
+
     };
-    const Registerhandler= async()=>{
-        if(sessionStorage.getItem('otp')===otp){
+    const Registerhandler = async () => {
+        if (sessionStorage.getItem('otp') === otp) {
             const registerRequestString = sessionStorage.getItem('registerRequestData');
             const registerRequestData = JSON.parse(registerRequestString);
-            console.log(registerRequestData);
+            console.log("registerRequestData",registerRequestData);
             let res = await RegistCandidate(registerRequestData);
             console.log(res);
-            if(res.message === "Đăng ký thành công" ){
-                sessionStorage.removeItem('otp');
-                sessionStorage.removeItem('registerRequestData');
-                navigate("/login");
-            }else{
-                setMessageError(res.message || "Lỗi chưa chạy server");
-            }
-        }       
+            sessionStorage.removeItem('otp');
+            sessionStorage.removeItem('registerRequestData');
+            navigate("/login");
+        }else{
+            setMessageError("Mã OTP không chính xác");
+        }
     }
     return (
         <div className="fjob-vn-by-html-to-verify">

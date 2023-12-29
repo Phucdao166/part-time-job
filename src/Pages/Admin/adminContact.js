@@ -21,7 +21,7 @@ export default function AdminContact() {
             <Sidebar isSidebar={isSidebar} />
           </div>
           <div className="adminDashboard-content">
-            <main className="adminDashboard-content">
+            <main className="adminDashboard-content" style={{ translate: 270 }}> 
               <Topbar setIsSidebar={setIsSidebar} />
               <Routes>
                 <Route path="/" element={<Contacts />} />

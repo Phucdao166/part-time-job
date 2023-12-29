@@ -8,7 +8,7 @@ import moment from 'moment';
 import logo_job from '../../../Assets/logo-job.png'
 import { useEffect } from 'react';
 import { GetAllEmployer, GetAllJob } from '../../../Service/userService';
-import { GetJobFromJobDetailByTypeId, ViecLamSieuCap, ViecLamMoiNhat, ViecLamSinhVien, ViecLamGanBanNhat, ViecLamTotNhat } from '../../../Service/jobDetailService';
+import { NhaTuyendungNoiBat, GetJobFromJobDetailByTypeId, ViecLamSieuCap, ViecLamMoiNhat, ViecLamSinhVien, ViecLamGanBanNhat, ViecLamTotNhat } from '../../../Service/jobDetailService';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import Footer from '../Themes/Footer/footer';
@@ -16,7 +16,7 @@ import Header from '../Themes/Header/header';
 import banner_1 from '../../../Assets/banner-1.png'
 import banner_2 from '../../../Assets/banner-2.png'
 import banner_3 from '../../../Assets/banner-3.png'
-import { CareJob, GetJobCare,countcvtd,countnhatd } from '../../../Service/jobService';
+import { CareJob, GetJobCare, countcvtd, countWeb, getWeb, countnhatd } from '../../../Service/jobService';
 import { GetAllCate, GetAllJobType } from '../../../Service/searchService';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -35,6 +35,7 @@ const HomePage = (props) => {
   const [viecLamGanBanNhat, setViecLamGanBanNhat] = useState([]);
   const [viecLamTotNhat, setViecLamTotNhat] = useState([]);
   const [listJobCare, setListJobCare] = useState([]);
+  const [listNhaTuyenDung, setListNhaTuyenDung] = useState([]);
   // const [appyJob, setApplyJob] = useState([]);
   const [city, setCity] = useState([]);
   const [listEmployer, setListEmployer] = useState([]);
@@ -42,6 +43,7 @@ const HomePage = (props) => {
   const [title1, setTitle1] = useState('');
   const [location, setLocation] = useState('');
   const [jobName, setJobName] = useState('');
+  const [time, setTime] = useState('');
   const [cid, setCid] = useState('');
   const navigate = useNavigate();
   const [care, setcare] = useState(false);
@@ -49,19 +51,18 @@ const HomePage = (props) => {
   const [countntd, setnhatuendung] = useState("");
   const [countcvdt, setcongvdt] = useState("");
   const [count, setCount] = useState(0);
-
+  const token = sessionStorage.getItem("token");
   // const [dataJobDetail, setDataJobDetail] = useState({});
-
+  const [accessCount, setAccessCount] = useState(0);
   const settings = {
-    autoplay: true,
-    speed: 3000,
-    autoplaySpeed: 3000,
-    className: "center",
-    centerMode: true,
+    dots: true,
     infinite: true,
-    slidesToShow: 3,
-    rows: 2,
-    slidesPerRow: 2,
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 2000,
+    autoplaySpeed: 2000,
+    cssEase: "linear"
   };
 
   const settings_1 = {
@@ -81,16 +82,16 @@ const HomePage = (props) => {
         const res = await getCity(1);
         console.log("City", res);
         setCity(res);
-         let counntd = await countnhatd();
-         //console.log("counntd",counntd);
-         let cvtd = await countcvtd();
+        let counntd = await countnhatd();
+        //console.log("counntd",counntd);
+        let cvtd = await countcvtd();
         // console.log("cvtd",cvtd);
-         setnhatuendung(counntd);
-         setcongvdt(cvtd);
+        setnhatuendung(counntd);
+        setcongvdt(cvtd);
       } catch (error) {
         console.error("Error fetching city:", error);
       }
-     
+
     };
 
     const fetchInitialData = async () => {
@@ -99,6 +100,7 @@ const HomePage = (props) => {
       getCate();
       getJobtype();
       getEmployer();
+      getNhaTuyenDung();
     };
 
     fetchInitialData();
@@ -113,10 +115,10 @@ const HomePage = (props) => {
   }, [care]);
 
   useEffect(() => {
-    // Tăng lượt truy cập lên 1 và lưu vào localStorage
-    const newCount = count + 1;
-    localStorage.setItem('visitCount', newCount.toString());
- // Kiểm tra xem lượt truy cập đã được lưu trữ trong localStorage chưa
+    // // Tăng lượt truy cập lên 1 và lưu vào localStorage
+    // const newCount = count + 1;
+    // localStorage.setItem('visitCount', newCount.toString());
+    // // Kiểm tra xem lượt truy cập đã được lưu trữ trong localStorage chưa
     // const visitCount = localStorage.getItem('visitCount');
     // if (visitCount) {
     //   setCount(parseInt(visitCount));
@@ -124,11 +126,20 @@ const HomePage = (props) => {
     //   // Nếu không có lượt truy cập trước đó, đặt giá trị mặc định là 0
     //   localStorage.setItem('visitCount', '0');
     // }
-
-    setCount(newCount);
-  
+    fetchAccessCount();
+    // console.log("accessCount", accessCount);
   }, []);
+  const fetchAccessCount = async () => {
 
+    try {
+      await countWeb();
+      const response1 = await getWeb();
+      console.log("datatest", response1);
+      setAccessCount(response1.count);
+    } catch (error) {
+      console.error('Lỗi khi lấy số lượt truy cập:', error);
+    }
+  };
   const getCate = async () => {
     let res = await GetAllCate();
     setlistcate(res);
@@ -136,6 +147,11 @@ const HomePage = (props) => {
   const getJobtype = async () => {
     let res = await GetAllJobType();
     setListjobType(res);
+  }
+  const getNhaTuyenDung = async () => {
+    let res = await NhaTuyendungNoiBat();
+    console.log("nhatuyendung", res);
+    setListNhaTuyenDung(res);
   }
 
   const getJobsCare = async () => {
@@ -178,15 +194,19 @@ const HomePage = (props) => {
 
 
   const SaveJobHandler = async (jid) => {
+    if (sessionStorage.getItem("idOfEmp") != null && sessionStorage.getItem("idOfCandidate")==null) {
+      toast.error("Bạn hãy đăng xuất tài khoản nhà tuyển dụng");
+      return;
+    }
     const candidateId = sessionStorage.getItem("candidateId");
     if (candidateId === null) {
-      navigate("/login");
+      window.location.href = "/login";
       return;
     }
     applyRequest.applicantId = candidateId;
     applyRequest.jobId = jid;
     console.log("setApplyRequest:", applyRequest);
-    await CareJob(applyRequest);
+    await CareJob(applyRequest, token);
     setcare(jid);
     toast.success("Bạn đã lưu công việc vào mục quan tâm");
   }
@@ -285,7 +305,7 @@ const HomePage = (props) => {
               />
             </Form>
           </div>
-          <div className="home-div-ant-row-wrapper" style={{marginLeft: '-10px'}}>
+          <div className="home-div-ant-row-wrapper" style={{ marginLeft: '-10px' }}>
             <div className="home-div-ant-row">
               <div className="home-div-wrapper">
                 <div className="home-div-ant-form-item">
@@ -341,27 +361,22 @@ const HomePage = (props) => {
               </div>
             </div>
           </div>
-          <div className="home-div-ant-col-2" style={{marginLeft: '10px'}}>
+          <div className="home-div-ant-col-2" style={{ marginLeft: '10px' }}>
             <div className="home-div-ant-row">
               <div className="home-div-ant-col-3">
                 <div className="home-div-ant-form-item">
                   <div className="home-div-ant-form-item-2">
                     <div className="home-div-ant-select-2">
                       <Form.Select aria-label="Default select example" id="home-div-ant-select-3"
-                        // name="city"
-                        // value={location}
-                        // onChange={event => setLocation(event.target.value)}
-                        // required
+                        name="time"
+                        value={time}
+                        onChange={event => setTime(event.target.value)}
+                        required
                       >
-                        <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Loại lương</option>
-                        {/* {ViecLamSinhVien && ViecLamSinhVien.length > 0 &&
-                          ViecLamSinhVien.map((item1, index1) => {
-                            return ( */}
-                              <option value="0">Ca</option>
-                              <option value="0">Giờ</option>
-                              <option value="0">Ngày</option>
-                            {/* )
-                          })} */}
+                        <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Thời gian </option>
+                        <option value="sáng">Sáng</option>
+                        <option value="chiều">Chiều</option>
+                        <option value="tối">Tối</option>
                       </Form.Select>
                     </div>
                   </div>
@@ -372,85 +387,42 @@ const HomePage = (props) => {
           <div className="home-div-banner-search-wrapper">
             <div className="home-div-banner-search">
               <button className="home-button">
-                <div className="home-text-wrapper-3"><a href={`/job?title=${(title1.length > 0) ? title1 : title}&location=${location}&jobName=${jobName}`}>Tìm kiếm</a></div>
+                <div className="home-text-wrapper-3"><a href={`/job?title=${(title1.length > 0) ? title1 : title}&location=${location}&jobName=${jobName}&time=${time}`}>Tìm kiếm</a></div>
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div style={{ backgroundImage: 'url("https://www.color-meanings.com/wp-content/uploads/Yellow-and-green-mixed.jpeg")', zIndex: '2'}}>
-        <div className="container" style={{marginTop: -20}}>
+      <div style={{ backgroundImage: 'url("https://t2.gstatic.com/licensed-image?q=tbn:ANd9GcQcc2j7n5qgIyGdb4DPyzyTVz06z4uRi1veUdKSYdIMEKW0r9KHlqJDmon8aIqGu2cvTYNQzLIuQRPoBBAG6wQ"', zIndex: '2' }}>
+        <div className="container" style={{ marginTop: -20 }}>
           <div className='home-employer'>Nhà tuyển dụng hàng đầu</div>
         </div>
 
-        <div className="container">
+        <div className="container" style={{ maxWidth: 1460, marginTop: 0 }}>
           <div className="card-slide">
+
             <Slider {...settings}>
-              <div className="card">
-                <a href="/job?listjob=ViecLamTotNhat">
-                  <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-                </a>
-              </div>
+              {listNhaTuyenDung && listNhaTuyenDung.length > 0 &&
+                listNhaTuyenDung.map((item, index) => {
+                  return (
+                    <div className="card">
+                      <a href={`/job?eid=${item.id}`}>
+                        <img style={{ width: '100%', height: '110px' }} src={item.image} alt="" />
+                      </a>
+                    </div>
+                  )
+                })}
 
-              {/* <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://fjwp.s3.amazonaws.com/blog/wp-content/uploads/2022/06/30125154/How-to-Get-a-Job-Where-You-Used-to-Work.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://s30876.pcdn.co/wp-content/uploads/Applying-for-a-Job.jpg.optimal.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://walmart-careers.scdn3.secure.raxcdn.com/dims4/default/ea0e7be/2147483647/resize/1600x/quality/90/?url=https%3A%2F%2Fwalmart-careers.scdn3.secure.raxcdn.com%2F5d%2F31%2Ff7b14c1147ce80086cf0fbc866dc%2Fhomepage-hero.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://images.agoramedia.com/wte3.0/gcms/job-hunting-while-pregnant-2021-722x406.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://www.gpb.org/sites/default/files/styles/flexheight/public/blogs/images/2017/10/23/in_demand_jobs.jpg?itok=ziUuhVyp" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://english4u.com.vn/Uploads/files/Screenshot_135.png" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD81UotvDX0da3eRj8Kz0J7N3MZaHbR7mBQTFO4JnsihMreIzIXkbi_NYWUfdGT0L0UKM&usqp=CAU" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://idvielts.com/wp-content/uploads/2020/02/ielts-job.jpg" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD7jiu5GItmf_WsDHfumnd8JTbWHbzX8L3qYEXGQPd1cocde8gWZlLnUwUWhQ299yE_s8&usqp=CAU" alt="" />
-              </div>
-
-              <div className="card">
-                <img style={{ width: '100%', height: '110px' }} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD7jiu5GItmf_WsDHfumnd8JTbWHbzX8L3qYEXGQPd1cocde8gWZlLnUwUWhQ299yE_s8&usqp=CAU" alt="" />
-              </div> */}
+              {listNhaTuyenDung && listNhaTuyenDung.length > 0 &&
+                listNhaTuyenDung.map((item, index) => {
+                  return (
+                    <div className="card">
+                      <a href={`/job?eid=${item.id}`}>
+                        <img style={{ width: '100%', height: '110px' }} src={item.image} alt="" />
+                      </a>
+                    </div>
+                  )
+                })}
             </Slider>
           </div>
         </div>
@@ -837,7 +809,7 @@ const HomePage = (props) => {
         </div>
       </div> */}
 
-      <div className='container' style={{marginBottom: '50px' , marginTop: '-30px'}}>
+      <div className='container' style={{ marginBottom: '50px', marginTop: '-30px' }}>
         <div className='home-employer'>Nền tảng kết nối ưu việt</div>
         <div className='foundation'>
           <div className='foundation-left'>
@@ -851,7 +823,7 @@ const HomePage = (props) => {
           <div className='foundation-mid'>
             <div className='foundation-content'>
               <i class="fa-solid fa-file-invoice-dollar"></i>
-              <div>{count}+</div>
+              <div>{accessCount}+</div>
               <div className='foundation-content-item'>Lượt tương tác</div>
             </div>
 

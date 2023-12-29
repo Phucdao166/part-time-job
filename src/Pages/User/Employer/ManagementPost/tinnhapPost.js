@@ -7,11 +7,12 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
-import { getjobbyid, updatejob, createPost } from '../../../../Service/employService';
+import { getjobbyid, updatejob, createPost, updatejobnhap } from '../../../../Service/employService';
 import { format } from 'date-fns';
 import { getCity } from '../../../../Service/candidateService';
 import { GetAllCate, GetAllJobType, GetAllJobTypeByCate } from '../../../../Service/searchService';
 import { useNavigate } from 'react-router-dom';
+import { eachDayOfInterval } from 'date-fns';
 function TinNhapPost() {
     const navigate = useNavigate();
     const [listjobdt, setListJob] = useState([]);
@@ -29,6 +30,17 @@ function TinNhapPost() {
     const [NameDistrict, setNameDistrict] = useState();
     const [loading, Setloading] = useState();
     const [selectedDays, setSelectedDays] = useState([]);
+    const [validInput, setValidInput] = useState(true);
+    const [fieldErrors, setFieldErrors] = useState({});
+    const tokenE = sessionStorage.getItem("tokenE");
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate1, setSelectedDate1] = useState(new Date());
+    const [dayNumbers, setdayNumbers] = useState([]);
+    function formatCurrency(value) {
+        console.log("value", value);
+        return value.toLocaleString('vi-VN');
+
+    };
     const [formInputEmp, setFormInput] = useState({
         // "title": "job 4",
         id: jobid,
@@ -37,28 +49,27 @@ function TinNhapPost() {
         description: "",
         salary: "",
         location: "",
-        deadline: "",
-        createdAt: "2023-11-11T16:03:01.812Z",
+        deadline: "2023-12-28T16:03:01.812Z",
+        createdAt: "2023-12-28T16:03:01.812Z",
         jobTime: "",
-        checktypejob: 0,
         status: 0,
         jobTypeId: 1,
         experient: "",
-        rolecompany: 0,
         numberApply: 0,
         typeJob: 0,
         daywork: "",
         note: "",
-        dob: 0,
         toage: 0,
         levellearn: "",
         fromage: 0,
         welfare: "",
         moredesciption: "",
         typename: "",
-        agreesalary: "",
         company: "",
         typeSalary: "",
+        startdate: "2023-12-28T16:03:01.812Z",
+        enddate: "2023-12-28T16:03:01.812Z",
+        gender: "",
     });
     useEffect(() => {
         const fetchData = async () => {
@@ -73,11 +84,13 @@ function TinNhapPost() {
         fetchData();
         getCate();
         getJobtype();
+    }, []);
+    useEffect(() => {
         setCityDistrict();
-    }, [formInputEmp.location]);
+    }, [formInputEmp]);
+
 
     useEffect(() => {
-        console.log("empid", empid);
         getJobByid(jobid);
     }, [jobid]);
 
@@ -88,23 +101,52 @@ function TinNhapPost() {
         };
         fetchData();
     }, []);
+    useEffect(() => {
+        const isFormValid =
+            formInputEmp.title !== "" &&
+            formInputEmp.description !== "" &&
+            formInputEmp.welfare !== "" &&
+            formInputEmp.employerId !== null &&
+            formInputEmp.salary !== "" &&
+            formInputEmp.location !== "" &&
+            formInputEmp.deadline !== null &&
+            formInputEmp.createdAt !== "" &&
+            formInputEmp.jobTime !== "" &&
+            formInputEmp.status !== null &&
+            formInputEmp.jobTypeId !== null &&
+            formInputEmp.numberApply !== 0 &&
+            formInputEmp.daywork !== "" &&
+            formInputEmp.note !== "" &&
+            formInputEmp.toage !== null &&
+            formInputEmp.fromage !== null &&
+            formInputEmp.typename !== null &&
+            formInputEmp.company !== "" &&
+            formInputEmp.typeSalary !== "" &&
+            formInputEmp.startdate !== null &&
+            formInputEmp.enddate !== null;
 
-    const setCityDistrict = () => {
+        setIsFormValid(isFormValid);
+
+        if (formInputEmp.typeJob !== 0) {
+            formInputEmp.daywork = getSelectedDaysString();
+        }
+        console.log("formInputEmp.daywork", formInputEmp.daywork);
+        console.log("formInputEmp", formInputEmp);
+    }, [formInputEmp]);
+
+    const setCityDistrict = async () => {
         if (city && formInputEmp.location && formInputEmp.location.length > 0 && formInputEmp.location.split(',').length > 2 && city.length > 0) {
             const addressParts = formInputEmp.location.split(',');
             console.log("addressParts", addressParts);
             setNameCity(addressParts[addressParts.length - 1]);
             setNameDistrict(addressParts[addressParts.length - 2]);
             formInputEmp.location = addressParts[0];
-
             const selectedCity = city.find((item) => item.name === addressParts[addressParts.length - 1]);
             if (selectedCity) {
                 setDistric(selectedCity.districts);
             }
         }
     }
-
-
 
     const getCate = async () => {
         let res = await GetAllCate();
@@ -122,26 +164,118 @@ function TinNhapPost() {
     }
 
 
-
-    // const handleEmployInput = (name, value) => {
-    //     setFormInput({ ...formInputEmp, [name]: value });
-    // };
     const handleEmployInput = (name, value) => {
         // Cập nhật giá trị vào đối tượng formInputEmp
-        setFormInput((prevFormInputEmp) => ({
-            ...prevFormInputEmp,
-            [name]: value,
-        }));
+        const updatedFormInputEmp = {
+            ...formInputEmp,
+            [name]: value
+        };
+        let updatedFieldErrors = { ...fieldErrors };
+        if (name === 'enddate') {
+            const startDate = new Date(formInputEmp.startdate);
+            const endDate = new Date(value);
+            const daysInRange1 = eachDayOfInterval({ start: startDate, end: endDate });
+            setdayNumbers(daysInRange1.map(day => day.getDay() === 0 ? 7 : day.getDay())); // Chuyển 0 (Chủ nhật) thành 7
+            console.log("setdayNumbers", dayNumbers);
+        }
+        if (name === 'startdate') {
+            if (formInputEmp.typeJob === 2) {
+                const currentDate = new Date(value);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                // const newDate = addMonths(startDate, 1);
+                setSelectedDate(maxDate);
+            } else if (formInputEmp.typeJob === 1) {
+                // const newDate = addDays(startDate, 1);
+                // const newDate1 = addMonths(startDate, 1);
+                const currentDate = new Date(value);
+                const currentDate1 = new Date(value);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                currentDate1.setDate(currentDate1.getDate() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                const maxDate1 = currentDate1.toISOString().split('T')[0];
+                setSelectedDate(maxDate);
+                setSelectedDate1(maxDate1);
+                console.log("setSelectedDate", maxDate);
+                console.log("setSelectedDate1", maxDate1);
+            }
+        }
+        if (name === 'typeJob') {
+            if (value === 2) {
+                const currentDate = new Date(formInputEmp.startdate);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                // const newDate = addMonths(startDate, 1);
+                setSelectedDate(maxDate);
+            } else if (value === 1) {
+                // const newDate = addDays(startDate, 1);
+                // const newDate1 = addMonths(startDate, 1);
+                const currentDate = new Date(formInputEmp.startdate);
+                const currentDate1 = new Date(formInputEmp.startdate);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                currentDate1.setDate(currentDate1.getDate() + 1);
+                const maxDate = currentDate.toISOString().split('T')[0];
+                const maxDate1 = currentDate1.toISOString().split('T')[0];
+                setSelectedDate(maxDate);
+                setSelectedDate1(maxDate1);
+                console.log("setSelectedDate", maxDate);
+                console.log("setSelectedDate1", maxDate1);
+            }
+        }
+        if ((name === 'description' || name === 'moredesciption') && value.length > 500) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        } else if ((name === 'title' || name === "note" || name === 'location' || name === 'jobTime'
+            || name === 'company' || name === 'welfare') && value.length > 80) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        }
+        else if (name === 'fromage' && (parseInt(value) <= parseInt(formInputEmp.toage))) {
+            updatedFieldErrors[name] = 'Giá trị "Đến" phải lớn hơn giá trị "Từ".';
+            setValidInput(false);
+        } else if (name === "numberApply" && value.length > 3) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        }
+        else if ((name === "fromage" || name === "toage") && value.length > 2) {
+            updatedFieldErrors[name] = 'Tuổi vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        } else if (name === "salary" && value.length > 9) {
+            updatedFieldErrors[name] = 'Văn bản vượt quá giới hạn ký tự.';
+            setValidInput(false);
+        } else if ((name === "fromage" || name === "toage") && value < 15) {
+            updatedFieldErrors[name] = 'Độ tuổi tối thiểu là 15 tuổi.';
+            setValidInput(false);
+        }
+        else {
+            setValidInput(true);
+            delete updatedFieldErrors[name];
+        }
+
+        setFieldErrors(updatedFieldErrors);
+        if (name === 'fromage') {
+            setFormInput(updatedFormInputEmp);
+        } else if (name === 'toage') {
+            setFormInput(updatedFormInputEmp);
+        }
+        if (name === 'toage') {
+            setFormInput(updatedFormInputEmp);
+        }
+        if (validInput) {
+            setFormInput(updatedFormInputEmp);
+        }
+
         if (formInputEmp.typeJob !== 0) {
             formInputEmp.daywork = getSelectedDaysString();
         }
-        console.log("formInputEmp.daywork", formInputEmp.daywork);
-        console.log("formInputEmp", formInputEmp)
     };
 
 
     let getJobByid = async (jobid) => {
-        let res = await getjobbyid(jobid);
+        let res = await getjobbyid(jobid, tokenE);
+        let res1 = await getCity(3);
+        console.log("City", res1);
+        setCity(res1);
         console.log("em", res);
         console.log("forminput", formInputEmp);
         setListJob(res);
@@ -157,26 +291,26 @@ function TinNhapPost() {
                 deadline: res[0].deadline,
                 createdAt: res[0].createdAt,
                 jobTime: res[0].jobTime,
-                checktypejob: res[0].checktypejob,
                 status: res[0].status,
                 jobTypeId: res[0].jobTypeId,
                 experient: res[0].experient,
                 company: res[0].company,
-                rolecompany: res[0].rolecompany,
                 numberApply: res[0].numberApply,
                 typeJob: res[0].typeJob,
                 daywork: res[0].daywork,
                 note: res[0].note,
-                dob: res[0].dob,
                 toage: res[0].toage,
                 levellearn: res[0].levellearn,
                 fromage: res[0].fromage,
                 welfare: res[0].welfare,
                 moredesciption: res[0].moredesciption,
                 typename: res[0].typename,
-                agreesalary: res[0].agreesalary,
                 typeSalary: res[0].typeSalary,
+                startdate: res[0].startdate,
+                gender: res[0].gender,
+                enddate: res[0].enddate,
             });
+            console.log("Dữ liệu mảng:", formInputEmp);
             try {
                 setSelectedDays(res[0].daywork.split(','));
             } catch {
@@ -186,7 +320,6 @@ function TinNhapPost() {
         } else {
             console.log("loi o day");
         }
-        setCityDistrict();
         console.log("Dữ liệu mảng:", res);
     }
     const handleEmployInput1 = (name, value) => {
@@ -220,20 +353,55 @@ function TinNhapPost() {
         await setRegisterRequest({ ...RegisterRequest, [name]: value });
         setNameDistrict(value);
     };
+    const checkTime = (time) => {
+        const regex = /^(0[0-9]|1[0-9]|2[0-3])h-(0[0-9]|1[0-9]|2[0-3])h$/;
 
+        // Kiểm tra xem thời gian có khớp với định dạng không
+        if (regex.test(time)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     const handleUpdateJob = async () => {
         console.log("nhay update");
+        if (!checkTime(formInputEmp.jobTime)) {
+            console.log("Invalid form");
+            toast.error("Điền lại thông tin thời gian làm! Sai mẫu");
+            return;
+        }
+        if (!isFormValid) {
+            console.log("Invalid form");
+            // navigate("/add-post");
+            toast.error("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
         if (formInputEmp.typeJob !== 0) {
             formInputEmp.daywork = getSelectedDaysString();
         }
         formInputEmp.location = formInputEmp.location + "," + NameDistrict + "," + NameCity;
         console.log("formInputEmp.location", formInputEmp.location);
         console.log("formInputEmp.location", formInputEmp);
-        let up = await updatejob(formInputEmp);
+        let up = await updatejob(formInputEmp, tokenE);
         console.log("updatejob", up);
         if (up) {
             setFormInput(formInputEmp);
-            toast.success("Lưu thông tin cá nhân thành công emp");
+            navigate("/post?edit=1");
+        }
+    }
+    const handleUpdateJob1 = async () => {
+        console.log("nhay update nhap");
+        if (formInputEmp.typeJob !== 0) {
+            formInputEmp.daywork = getSelectedDaysString();
+        }
+        formInputEmp.location = formInputEmp.location + "," + NameDistrict + "," + NameCity;
+        console.log("formInputEmp.location", formInputEmp.location);
+        console.log("formInputEmp.location", formInputEmp);
+        let up = await updatejobnhap(formInputEmp, tokenE);
+        console.log("updatejob", up);
+        if (up) {
+            setFormInput(formInputEmp);
+            navigate("/post?to=5&edit=1");
         }
     }
 
@@ -250,77 +418,6 @@ function TinNhapPost() {
     const getSelectedDaysString = () => {
         return selectedDays.join(',');
     };
-    useEffect(() => {
-        const isFormValid =
-            formInputEmp.title !== "" &&
-            formInputEmp.description !== "" &&
-            formInputEmp.welfare !== "" &&
-            formInputEmp.employerId !== null &&
-            formInputEmp.salary !== "" &&
-            formInputEmp.location !== "" &&
-            formInputEmp.deadline !== null &&
-            formInputEmp.createdAt !== "" &&
-            formInputEmp.jobTime !== "" &&
-            formInputEmp.status !== null &&
-            formInputEmp.jobTypeId !== null &&
-            formInputEmp.numberApply !== null &&
-            formInputEmp.daywork !== "" &&
-            formInputEmp.note !== "" &&
-            formInputEmp.toage !== null &&
-            formInputEmp.fromage !== null &&
-            formInputEmp.moredesciption !== "" &&
-            formInputEmp.typename !== null &&
-            formInputEmp.company !== "" &&
-            formInputEmp.typeSalary !== "";
-
-        setIsFormValid(isFormValid);
-        if (formInputEmp.typeJob !== 0) {
-            formInputEmp.daywork = getSelectedDaysString();
-        }
-        console.log("formInputEmp.daywork", formInputEmp.daywork);
-        console.log("formInputEmp", formInputEmp);
-    }, [formInputEmp]);
-    const handleSubmit = async (event) => {
-
-        console.log("formInputEmp", formInputEmp);
-        event.preventDefault();
-
-        if (!isFormValid) {
-            console.log("Invalid form");
-            navigate("/add-post");
-            toast.error("Vui lòng điền đầy đủ thông tin!");
-        } else {
-            try {
-                if (formInputEmp.location && formInputEmp.location.length > 0) {
-                    formInputEmp.location = formInputEmp.location + "," + RegisterRequest.district + "," + RegisterRequest.city
-                    console.log("formInputEmp.location", formInputEmp.location);
-                }
-                // else if (formInputEmp.fromage < formInputEmp.toage) {
-                //     setError('The "fromage" value must be greater than the "toage" value.');
-                //     return;
-                //   }
-                else {
-                    formInputEmp.location = RegisterRequest.district + "," + RegisterRequest.city
-                }
-                console.log("formInputEmp", formInputEmp);
-                let up = await updatejob(formInputEmp);
-                console.log("updatejob", up);
-                if (up) {
-                    setFormInput(formInputEmp);
-                    navigate("/post-manage?toast=1");
-                    toast.success("Lưu thông tin cá nhân thành công emp");
-                }
-                else {
-                    console.log("API call failed");
-                    toast.error("Đã xảy ra lỗi trong quá trình tạo công việc!");
-                }
-            } catch (error) {
-                console.log("API call error:", error);
-                toast.error("Đã xảy ra lỗi trong quá trình tạo công việc!");
-            }
-        }
-    };
-
     return (
         <>
             <HeaderEmployer />
@@ -329,197 +426,276 @@ function TinNhapPost() {
                 return (
                     <form>
                         <div className="employer-page">
-                            <div className="employer-page-sidebar">
-                                {/* <SideBar /> */}
-                            </div>
-                            <div className="employer-page">
+                            <div className="create-post-content">
+                                <div className="create-post">
+                                    <div className="create-post-top">Chỉnh sửa bài đăng</div>
+                                    <div className="create-post-title">Tên cửa hàng/Công ty<img id='require-icon' src={require_icon} alt="" /></div>
+                                    <Form.Control
+                                        id="create-post-title"
+                                        type="text"
+                                        placeholder="Bơ Bán Bò"
+                                        name="company"
+                                        onChange={({ target }) => {
+                                            handleEmployInput(target.name, target.value);
+                                        }}
+                                        value={formInputEmp.company}
+                                    />
+                                    {fieldErrors.company && <p style={{ color: 'red' }}>{fieldErrors.company}*</p>}
+                                </div>
 
-                                <div className="create-post-content">
-                                    <div className="create-post">
-                                        <div className="create-post-top">Tạo bài đăng</div>
-                                        <div className="create-post-choose-role">
-                                            <div className="create-post-title">Vai trò đăng<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <div className="create-post-role">
-                                                <div className="create-post-role-radio">
-                                                    <input type="radio" name="rolecompany"
-                                                        onChange={({ target }) => {
-                                                            handleEmployInput(target.name, parseInt(target.value));
-                                                        }}
-                                                        id="personal" value={formInputEmp.rolecompany} checked={formInputEmp.rolecompany === 1} />
-                                                    <label for="personal">Cá nhân</label>
-                                                </div>
-                                                <div className="create-post-role-radio">
-                                                    <input type="radio" onChange={({ target }) => {
-                                                        handleEmployInput(target.name, parseInt(target.value));
-                                                    }}
-                                                        name="rolecompany" value={formInputEmp.rolecompany} id="company" checked={formInputEmp.rolecompany === 0} />
-                                                    <label for="company">Công ty</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="create-post-title">Tên cửa hàng/Công ty<img id='require-icon' src={require_icon} alt="" /></div>
+                                <div className="create-post-info">
+                                    <div>
+                                        <div className="create-post-title">Tiêu đề tin tuyển dụng<img id='require-icon' src={require_icon} alt="" /></div>
                                         <Form.Control
                                             id="create-post-title"
                                             type="text"
-                                            placeholder="Bơ Bán Bò"
-                                            name="company"
+                                            placeholder="Nhân viên bán hàng"
+                                            name="title"
+                                            value={formInputEmp.title}
                                             onChange={({ target }) => {
                                                 handleEmployInput(target.name, target.value);
                                             }}
-                                            value={formInputEmp.company}
                                         />
+                                        {fieldErrors.title && <p style={{ color: 'red' }}>{fieldErrors.title}*</p>}
                                     </div>
-                                    <div className="create-post-info">
-                                        <div>
-                                            <div className="create-post-title">Tiêu đề tin tuyển dụng<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <Form.Control
-                                                id="create-post-title"
-                                                type="text"
-                                                placeholder="Nhân viên bán hàng"
-                                                name="title"
-                                                value={formInputEmp.title}
+                                    <div className="create-post-info-job">
+                                        <div className="create-post-info-job-left">
+                                            <div className="create-post-title">Ngành nghề đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
+                                            <Form.Select aria-label="Default select example"
+                                                id="create-post-select"
+                                                name="typename"
+                                                onChange={({ target }) => {
+                                                    handleEmployInput1(target.name, target.value);
+                                                }}
+                                                required
+                                            >
+                                                <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Các ngành nghề</option>
+                                                {listcate && listcate.length > 0 &&
+                                                    listcate.map((item1, index1) => {
+                                                        return (
+                                                            item1.id == formInputEmp.typename ? (
+                                                                <option selected value={item1.id}>
+                                                                    {item1.name}
+                                                                </option>
+                                                            ) : (
+                                                                <option value={item1.id}>
+                                                                    {item1.name}
+                                                                </option>
+                                                            )
+                                                        )
+                                                    })}
+                                            </Form.Select>
+                                            <div className="create-post-title">Loại công việc<img id='require-icon' src={require_icon} alt="" /></div>
+                                            <Form.Select aria-label="Default select example"
+                                                id="create-post-select"
+                                                name="jobTypeId"
                                                 onChange={({ target }) => {
                                                     handleEmployInput(target.name, target.value);
                                                 }}
-                                            />
-                                        </div>
-                                        <div className="create-post-info-job">
-                                            <div className="create-post-info-job-left">
-                                                <div className="create-post-title">Ngành nghề đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
-                                                <Form.Select aria-label="Default select example"
-                                                    id="create-post-select"
-                                                    name="typename"
-                                                    onChange={({ target }) => {
-                                                        handleEmployInput1(target.name, target.value);
-                                                    }}
-                                                    required
-                                                >
-                                                    <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Các ngành nghề</option>
-                                                    {listcate && listcate.length > 0 &&
-                                                        listcate.map((item1, index1) => {
-                                                            return (
-                                                                item1.id == formInputEmp.typename ? (
-                                                                    <option selected value={item1.id}>
-                                                                        {item1.name}
-                                                                    </option>
-                                                                ) : (
-                                                                    <option value={item1.id}>
-                                                                        {item1.name}
-                                                                    </option>
-                                                                )
+                                                required
+                                            >
+                                                <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Loại công việc</option>
+                                                {listjobType && listjobType.length > 0 &&
+                                                    listjobType.map((item1, index1) => {
+                                                        return (
+                                                            item1.id === formInputEmp.jobTypeId ? (
+                                                                <option selected value={item1.id}>
+                                                                    {item1.nameType}
+                                                                </option>
+                                                            ) : (
+                                                                <option value={item1.id}>
+                                                                    {item1.nameType}
+                                                                </option>
                                                             )
-                                                        })}
-                                                </Form.Select>
-                                                <div className="create-post-title">Loại công việc<img id='require-icon' src={require_icon} alt="" /></div>
-                                                <Form.Select aria-label="Default select example"
-                                                    id="create-post-select"
-                                                    name="jobTypeId"
-                                                    onChange={({ target }) => {
-                                                        handleEmployInput(target.name, target.value);
-                                                    }}
-                                                    required
-                                                >
-                                                    <option id='home-tiltle' style={{ display: "none", color: "#444" }}>Loại công việc</option>
-                                                    {listjobType && listjobType.length > 0 &&
-                                                        listjobType.map((item1, index1) => {
-                                                            return (
-                                                                item1.id === formInputEmp.jobTypeId ? (
-                                                                    <option selected value={item1.id}>
-                                                                        {item1.nameType}
-                                                                    </option>
-                                                                ) : (
-                                                                    <option value={item1.id}>
-                                                                        {item1.nameType}
-                                                                    </option>
-                                                                )
 
-                                                            )
-                                                        })}
-                                                </Form.Select>
-                                                <div className="create-post-choose-role">
-                                                    <div className="create-post-title">Mức lương<img id='require-icon' src={require_icon} alt="" /></div>
-                                                    <div className="create-post-role">
-                                                        <div className="create-post-role-radio"><input type="text" name="salary" onChange={({ target }) => {
-                                                            handleEmployInput(target.name, target.value);
-                                                        }}
+                                                        )
+                                                    })}
+                                            </Form.Select>
+                                            <div className="create-post-choose-role">
+                                                <div className="create-post-title">Mức lương<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <div className="create-post-role">
+                                                    <div className="create-post-role-radio">
+                                                        <input type="number" name="salary"
+                                                            onKeyPress={(event) => {
+                                                                const keyCode = event.which || event.keyCode;
+                                                                const invalidCharacters = /[^0-9]/;
+
+                                                                if (keyCode !== 8 && keyCode !== 0 && invalidCharacters.test(event.key)) {
+                                                                    event.preventDefault();
+                                                                }
+                                                            }}
+                                                            onChange={({ target }) => {
+                                                                let value = target.value;
+                                                                // Loại bỏ số 0 ban đầu nếu có
+                                                                if (value.length > 0 && value[0] === '0') {
+                                                                    value = value.slice(1);
+                                                                }
+
+                                                                // Kiểm tra và không cho phép giá trị âm
+                                                                if (value < 0) {
+                                                                    value = '';
+                                                                }
+                                                                handleEmployInput(target.name, value);
+                                                            }}
                                                             placeholder=""
-                                                            value={formInputEmp.salary}
+                                                            value={formatCurrency(formInputEmp.salary)}
                                                         />
-                                                            <div className="create-post-role">
-                                                                <div className="create-post-role-radio"><input type="radio"
-                                                                    name="typeSalary"
-                                                                    onChange={({ target }) => {
-                                                                        handleEmployInput(target.name, target.value);
-                                                                    }}
-                                                                    checked={formInputEmp.typeSalary === "Giờ"}
-                                                                    value="Giờ"
-                                                                />Giờ</div>
-                                                                <div className="create-post-role-radio"><input type="radio"
-                                                                    name="typeSalary"
-                                                                    onChange={({ target }) => {
-                                                                        handleEmployInput(target.name, target.value);
-                                                                    }}
-                                                                    checked={formInputEmp.typeSalary === "Ngày"}
-                                                                    value="Ngày"
-                                                                />Ngày</div>
-                                                                <div className="create-post-role-radio"><input type="radio"
-                                                                    name="typeSalary"
-                                                                    onChange={({ target }) => {
-                                                                        handleEmployInput(target.name, target.value);
-                                                                    }}
-                                                                    checked={formInputEmp.typeSalary === "Tháng"}
-                                                                    value="Tháng"
-                                                                />Tháng</div>
-                                                            </div>
+                                                        <div className="create-post-role">
+                                                            <div className="create-post-role-radio"><input type="radio"
+                                                                name="typeSalary"
+                                                                onChange={({ target }) => {
+                                                                    handleEmployInput(target.name, target.value);
+                                                                }}
+                                                                checked={formInputEmp.typeSalary === "Giờ"}
+                                                                value="Giờ"
+                                                            />Giờ</div>
+                                                            <div className="create-post-role-radio"><input type="radio"
+                                                                name="typeSalary"
+                                                                onChange={({ target }) => {
+                                                                    handleEmployInput(target.name, target.value);
+                                                                }}
+                                                                checked={formInputEmp.typeSalary === "Ngày"}
+                                                                value="Ngày"
+                                                            />Ngày</div>
+                                                            <div className="create-post-role-radio"><input type="radio"
+                                                                name="typeSalary"
+                                                                onChange={({ target }) => {
+                                                                    handleEmployInput(target.name, target.value);
+                                                                }}
+                                                                disabled={formInputEmp.typeJob === 2 ? false : true}
+                                                                checked={formInputEmp.typeSalary === "Tháng"}
+                                                                value="Tháng"
+                                                            />Tháng</div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="create-post-title">Tỉnh/Thành phố<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Select aria-label="Default select example" id="create-post-select"
+                                                    name="city"
+                                                    value={NameCity}
+                                                    onChange={handleChange1}
+                                                    required
+                                                >
+                                                    <option style={{ display: "none" }}>Chọn Tỉnh/Thành Phố</option>
+                                                    {city && city.length > 0 &&
+                                                        city.map((item1, index1) => {
+                                                            return (
+                                                                item1.name === NameCity ? (
+                                                                    <option selected value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                ) : (
+                                                                    <option value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                )
+                                                            )
+                                                        })}
+                                                </Form.Select>
+                                                <div className="create-post-title">Quận/Huyện<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Select aria-label="Default select example" id="create-post-select"
+                                                    name="district"
+                                                    value={NameDistrict}
+                                                    onChange={handleChange}
+                                                    required
+                                                >
+                                                    <option style={{ display: "none" }}>Chọn Quận/Huyện</option>
+                                                    {distric && distric.length > 0 &&
+                                                        distric.map((item1, index1) => {
+                                                            return (
+                                                                item1.name === NameDistrict ? (
+                                                                    <option value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                ) : (
+                                                                    <option value={item1.name}>
+                                                                        {item1.name}
+                                                                    </option>
+                                                                )
+
+                                                            )
+                                                        })}
+                                                </Form.Select>
                                             </div>
-                                            <div className="create-post-info-job-right">
-                                                <div>
-                                                    <div className="create-post-title">Số lượng<img id='require-icon' src={require_icon} alt="" /></div>
+                                        </div>
+                                        <div className="create-post-info-job-right">
+                                            <div>
+                                                <div className="create-post-title">Số lượng<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <Form.Control
+                                                    id="create-post-title"
+                                                    type="number"
+                                                    name="numberApply"
+                                                    onKeyPress={(event) => {
+                                                        const keyCode = event.which || event.keyCode;
+                                                        const invalidCharacters = /[^0-9]/;
+
+                                                        if (keyCode !== 8 && keyCode !== 0 && invalidCharacters.test(event.key)) {
+                                                            event.preventDefault();
+                                                        }
+                                                    }}
+                                                    onChange={({ target }) => {
+                                                        let value = target.value;
+
+                                                        // Loại bỏ số 0 ban đầu nếu có
+                                                        if (value.length > 0 && value[0] === '0') {
+                                                            value = value.slice(1);
+                                                        }
+
+                                                        // Kiểm tra và không cho phép giá trị âm
+                                                        if (value < 0) {
+                                                            value = '';
+                                                        }
+                                                        handleEmployInput(target.name, value);
+                                                    }}
+                                                    value={formInputEmp.numberApply}
+                                                    placeholder="Nhập số lượng tuyển dụng"
+                                                />
+                                            </div>
+
+                                            <div className="create-post-choose-role">
+                                                <div className="create-post-title">Loại hình công việc<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <div className="create-post-role">
+                                                    <div className="create-post-role-radio"><input type="radio"
+                                                        name="typeJob"
+                                                        onChange={({ target }) => {
+                                                            handleEmployInput(target.name, parseInt(target.value));
+                                                        }}
+                                                        value={0} checked={formInputEmp.typeJob === 0}
+                                                    /> Trong ngày</div>
+                                                    <div className="create-post-role-radio"><input type="radio"
+                                                        name="typeJob"
+                                                        onChange={({ target }) => {
+                                                            handleEmployInput(target.name, parseInt(target.value));
+                                                        }}
+                                                        value={1} checked={formInputEmp.typeJob === 1}
+                                                    />Ngắn hạn(Trong 1 tuần-1 tháng)</div>
+                                                    <div className="create-post-role-radio"><input type="radio"
+                                                        onChange={({ target }) => {
+                                                            handleEmployInput(target.name, parseInt(target.value));
+                                                        }}
+                                                        name="typeJob"
+                                                        checked={formInputEmp.typeJob === 2}
+                                                        value={2}
+                                                    />Dài hạn(Trên 1 tháng)</div>
+                                                </div>
+                                            </div>
+                                            {formInputEmp.typeJob === 0 ? (
+                                                <div className="create-post-choose-role">
+                                                    <div className="create-post-title">Ngày làm<img id='require-icon' src={require_icon} alt="" /></div>
                                                     <Form.Control
-                                                        id="create-post-title"
-                                                        type="number"
-                                                        name="numberApply"
                                                         onChange={({ target }) => {
                                                             handleEmployInput(target.name, target.value);
                                                         }}
-                                                        value={formInputEmp.numberApply}
-                                                        placeholder="Nhập số lượng tuyển dụng"
+                                                        placeholder="yyyy/MM/dd"
+                                                        id="datemain"
+                                                        type="date"
+                                                        name="daywork"
+                                                        min={currentDate}
+                                                        value={formInputEmp.daywork.includes(",") ? '' : format(new Date(formInputEmp.daywork), 'yyyy-MM-dd')}
+                                                        required
                                                     />
-                                                </div>
-
-                                                <div className="create-post-choose-role">
-                                                    <div className="create-post-title">Loại hình công việc<img id='require-icon' src={require_icon} alt="" /></div>
-                                                    <div className="create-post-role">
-                                                        <div className="create-post-role-radio"><input type="radio"
-                                                            name="typeJob"
-                                                            onChange={({ target }) => {
-                                                                handleEmployInput(target.name, parseInt(target.value));
-                                                            }}
-                                                            value={0} checked={formInputEmp.typeJob === 0}
-                                                        /> Trong ngày</div>
-                                                        <div className="create-post-role-radio"><input type="radio"
-                                                            name="typeJob"
-                                                            onChange={({ target }) => {
-                                                                handleEmployInput(target.name, parseInt(target.value));
-                                                            }}
-                                                            value={1} checked={formInputEmp.typeJob === 1}
-                                                        />Ngắn hạn(Trong 1 tuần-1 tháng)</div>
-                                                        <div className="create-post-role-radio"><input type="radio"
-                                                            onChange={({ target }) => {
-                                                                handleEmployInput(target.name, parseInt(target.value));
-                                                            }}
-                                                            name="typeJob"
-                                                            checked={formInputEmp.typeJob === 2}
-                                                            value={2}
-                                                        />Dài hạn(Trên 1 tháng)</div>
-                                                    </div>
-                                                </div>
-                                                {formInputEmp.typeJob === 0 ? (
                                                     <div className="create-post-choose-role">
-                                                        <div className="create-post-title">Ngày làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                        <div className="create-post-title">Hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
                                                         <Form.Control
                                                             onChange={({ target }) => {
                                                                 handleEmployInput(target.name, target.value);
@@ -527,18 +703,31 @@ function TinNhapPost() {
                                                             placeholder="dd/MM/YYYY"
                                                             id="datemain"
                                                             type="date"
-                                                            name="daywork"
+                                                            name="deadline"
                                                             min={currentDate}
-                                                            value={formInputEmp.daywork}
+                                                            max={formInputEmp.daywork}
+                                                            value={format(new Date(formInputEmp.deadline), 'yyyy-MM-dd')}
                                                             required
                                                         />
                                                     </div>
-                                                ) : (
-                                                    <div>
-                                                        <div className="create-post-title">Ngày làm việc<img id='require-icon' src={require_icon} alt="" /></div>
-                                                        <div className="create-post-role">
-                                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(day => (
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <div className="create-post-title">Ngày làm việc trong tuần<img id='require-icon' src={require_icon} alt="" /></div>
+                                                    <div className="create-post-role">
+                                                        {[1, 2, 3, 4, 5, 6, 7, 8].map(day => {
+                                                            // const currentDay = new Date(`2023-12-${day}`);
+                                                            let isInitialDay1 = false;
+                                                            if (dayNumbers.length > 0) {
+                                                                isInitialDay1 = dayNumbers.includes(parseInt(day - 1));
+                                                                if (dayNumbers.length >= 7) {
+                                                                    isInitialDay1 = true;
+                                                                }
+                                                            }
+
+                                                            return (
                                                                 <div key={day} className="create-post-role-radio">
+                                                                    {/* <p>{isInitialDay1 ? (<div>true{dayNumbers[0]}</div>) : (<div>false{dayNumbers[0]}</div>)}</p> */}
                                                                     <input
                                                                         type="checkbox"
                                                                         name="daywork"
@@ -547,17 +736,14 @@ function TinNhapPost() {
                                                                             handleEmployInputx(target.name, target.value);
                                                                         }}
                                                                         checked={selectedDays.includes(day.toString())}
+                                                                        disabled={!isInitialDay1}
                                                                     />
-                                                                    {day === 1 ? 'Tất cả' : day === 8 ? 'Chủ nhất' : `Thứ ${day}`}
+                                                                    {day === 1 ? 'Tất cả' : day === 8 ? 'Chủ nhật' : `Thứ ${day}`}
                                                                 </div>
-                                                            ))}
-                                                        </div>
+                                                            );
+                                                        })}
                                                     </div>
-
-                                                )}
-
-                                                <div className="create-post-choose-role">
-                                                    <div className="create-post-title">Thời hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
+                                                    <div className="create-post-title">Ngày bắt đầu làm<img id='require-icon' src={require_icon} alt="" /></div>
                                                     <Form.Control
                                                         onChange={({ target }) => {
                                                             handleEmployInput(target.name, target.value);
@@ -565,137 +751,155 @@ function TinNhapPost() {
                                                         placeholder="dd/MM/YYYY"
                                                         id="datemain"
                                                         type="date"
-                                                        name="deadline"
+                                                        name="startdate"
                                                         min={currentDate}
-                                                        value={formInputEmp.deadline}
+                                                        value={format(new Date(formInputEmp.startdate), 'yyyy-MM-dd')}
                                                         required
                                                     />
+                                                    {formInputEmp.typeJob === 2 ? (
+                                                        <div>
+                                                            <div className="create-post-title">Ngày kết thúc làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                            <Form.Control
+                                                                onChange={({ target }) => {
+                                                                    handleEmployInput(target.name, target.value);
+                                                                }}
+                                                                placeholder="dd/MM/YYYY"
+                                                                id="datemain"
+                                                                type="date"
+                                                                name="enddate"
+                                                                min={selectedDate}
+                                                                value={format(new Date(formInputEmp.enddate), 'yyyy-MM-dd')}
+                                                                required
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <div className="create-post-title">Ngày kết thúc làm<img id='require-icon' src={require_icon} alt="" /></div>
+                                                            <Form.Control
+                                                                onChange={({ target }) => {
+                                                                    handleEmployInput(target.name, target.value);
+                                                                }}
+                                                                placeholder="dd/MM/YYYY"
+                                                                id="datemain"
+                                                                type="date"
+                                                                name="enddate"
+                                                                min={selectedDate1}
+                                                                max={selectedDate}
+                                                                value={format(new Date(formInputEmp.enddate), 'yyyy-MM-dd')}
+                                                                required
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    <div className="create-post-choose-role">
+                                                        <div className="create-post-title">Hạn đăng tuyển<img id='require-icon' src={require_icon} alt="" /></div>
+                                                        <Form.Control
+                                                            onChange={({ target }) => {
+                                                                handleEmployInput(target.name, target.value);
+                                                            }}
+                                                            placeholder="dd/MM/YYYY"
+                                                            id="datemain"
+                                                            type="date"
+                                                            name="deadline"
+                                                            min={currentDate}
+                                                            max={formInputEmp.startdate}
+                                                            value={format(new Date(formInputEmp.deadline), 'yyyy-MM-dd')}
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="create-post-choose-role">
+                                                <div className="create-post-title">Nhập thời gian làm việc trong ngày: 06h-09h<img id='require-icon' src={require_icon} alt="" /></div>
+                                                <div className="create-post-role">
+                                                    <Form.Control
+                                                        id="create-post-title"
+                                                        type="text"
+                                                        placeholder="7h-10h và 14h-17"
+                                                        name="jobTime"
+                                                        onChange={({ target }) => {
+                                                            handleEmployInput(target.name, target.value);
+                                                        }}
+                                                        value={formInputEmp.jobTime}
+                                                    />
+                                                    {fieldErrors.jobTime && <p style={{ color: 'red' }}>{fieldErrors.jobTime}*</p>}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <div className="create-post-title">Tỉnh/Thành phố<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <Form.Select aria-label="Default select example" id="input"
-                                                name="city"
-                                                value={NameCity}
-                                                onChange={handleChange1}
-                                                required
-                                            >
-                                                {city && city.length > 0 &&
-                                                    city.map((item1, index1) => {
-                                                        return (
-                                                            item1.name === NameCity ? (
-                                                                <option selected value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            ) : (
-                                                                <option value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            )
-                                                        )
-                                                    })}
-                                            </Form.Select>
-                                            <div className="create-post-title">Quận/Huyện<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <Form.Select aria-label="Default select example" id="input"
-                                                name="district"
-                                                value={NameDistrict}
-                                                onChange={handleChange}
-                                                required
-                                            >
-                                                {distric && distric.length > 0 &&
-                                                    distric.map((item1, index1) => {
-                                                        return (
-                                                            item1.name === NameDistrict ? (
-                                                                <option value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            ) : (
-                                                                <option value={item1.name}>
-                                                                    {item1.name}
-                                                                </option>
-                                                            )
 
-                                                        )
-                                                    })}
-                                            </Form.Select>
-                                            <div className="create-post-title">Địa chỉ cụ thể<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <Form.Control
-                                                id="create-post-title"
-                                                type="text"
-                                                name="location"
-                                                onChange={({ target }) => {
-                                                    handleEmployInput2(target.name, target.value);
-                                                }}
-                                                value={formInputEmp.location}
-                                                placeholder="Số 10 Phạm Hùng"
-                                            />
+
                                         </div>
                                     </div>
+                                    <div>
 
-                                    <div className="create-post-time">
-                                        <div className="create-post-choose-role">
-                                            <div className="create-post-title">Lịch làm việc<img id='require-icon' src={require_icon} alt="" /></div>
-                                            <div className="create-post-role">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="create-post-choose-role">
-                                        <div className="create-post-title">Ghi chú <img id='require-icon' src={require_icon} alt="" /></div>
-                                        <Form.Control
-                                            id="create-post-title"
-                                            type="text"
-                                            name="note"
-                                            onChange={({ target }) => {
-                                                handleEmployInput(target.name, target.value);
-                                            }}
-                                            value={formInputEmp.note}
-                                            placeholder="Ghi chú"
-                                        />
-
-                                        <div className="create-post-title">Mô tả công việc <img id='require-icon' src={require_icon} alt="" /></div>
+                                        <div className="create-post-title">Địa chỉ cụ thể<img id='require-icon' src={require_icon} alt="" /></div>
                                         <Form.Control
                                             id="create-post-des"
                                             type="text"
+                                            name="location"
                                             onChange={({ target }) => {
-                                                handleEmployInput(target.name, target.value);
+                                                handleEmployInput2(target.name, target.value);
                                             }}
-                                            value={formInputEmp.description}
-                                            name="description"
-                                            placeholder="Mô tả công việc"
+                                            value={formInputEmp.location}
+                                            placeholder="Số 10 Phạm Hùng"
                                         />
+                                        {fieldErrors.location && <p style={{ color: 'red' }}>{fieldErrors.location}*</p>}
                                     </div>
                                 </div>
 
+                                <div className="create-post-info">
+                                    <div className="create-post-title">Ghi chú <img id='require-icon' src={require_icon} alt="" /></div>
+                                    <Form.Control
+                                        id="create-post-title"
+                                        type="text"
+                                        name="note"
+                                        onChange={({ target }) => {
+                                            handleEmployInput(target.name, target.value);
+                                        }}
+                                        value={formInputEmp.note}
+                                        placeholder="Ghi chú"
+                                    />
+                                    {fieldErrors.note && <p style={{ color: 'red' }}>{fieldErrors.note}*</p>}
+                                    <div className="create-post-title">Mô tả công việc <img id='require-icon' src={require_icon} alt="" /></div>
+                                    <Form.Control
+                                        id="create-post-des"
+                                        type="text"
+                                        onChange={({ target }) => {
+                                            handleEmployInput(target.name, target.value);
+                                        }}
+                                        value={formInputEmp.description}
+                                        name="description"
+                                        placeholder="Mô tả công việc"
+                                    />
+                                    {fieldErrors.description && <p style={{ color: 'red' }}>{fieldErrors.description}*</p>}
+                                </div>
                                 <div className="create-post-gender">
                                     <div className="create-post-info-job">
                                         <div className="create-post-info-job-left">
                                             <div className="create-post-choose-role">
-                                                <div className="create-post-title">Giới tính <span>(Để trống nếu không yêu cầu)</span></div>
+                                                <div className="create-post-title">Giới tính <img id='require-icon' src={require_icon} alt="" /><span></span></div>
                                                 <div className="create-post-role">
                                                     <div className="create-post-role-radio"><input type="radio"
-                                                        name="dob"
+                                                        name="gender"
                                                         onChange={({ target }) => {
-                                                            handleEmployInput(target.name, parseInt(target.value));
+                                                            handleEmployInput(target.name, target.value);
                                                         }}
-                                                        checked={formInputEmp.dob === 1}
-                                                        value={formInputEmp.dob}
+                                                        checked={formInputEmp.gender === "Nam"}
+                                                        value="Nam"
                                                     />Nam</div>
                                                     <div className="create-post-role-radio"><input type="radio"
-                                                        name="dob"
+                                                        name="gender"
                                                         onChange={({ target }) => {
-                                                            handleEmployInput(target.name, parseInt(target.value));
+                                                            handleEmployInput(target.name, target.value);
                                                         }}
-                                                        checked={formInputEmp.dob === 0}
-                                                        value={formInputEmp.dob}
+                                                        checked={formInputEmp.gender === "Nữ"}
+                                                        value="Nữ"
                                                     />Nữ</div>
                                                     <div className="create-post-role-radio"><input type="radio"
-                                                        name="dob"
+                                                        name="gender"
                                                         onChange={({ target }) => {
-                                                            handleEmployInput(target.name, parseInt(target.value));
+                                                            handleEmployInput(target.name, target.value);
                                                         }}
-                                                        checked={formInputEmp.dob === 3}
-                                                        value={3}
+                                                        checked={formInputEmp.gender === "Bất kỳ"}
+                                                        value="Bất kỳ"
                                                     />Không yêu cầu</div>
                                                 </div>
                                             </div>
@@ -720,19 +924,28 @@ function TinNhapPost() {
 
                                         <div className="create-post-info-job-right">
                                             <div className="create-post-choose-role">
-                                                <div className="create-post-title">Độ tuổi <span>(Để trống nếu không yêu cầu)</span></div>
+                                                <div className="create-post-title">Độ tuổi <img id='require-icon' src={require_icon} alt="" /><span></span></div>
                                                 <div className="create-post-role">
                                                     <div className="create-post-role-radio">
                                                         <InputGroup className="mb-3">
-                                                            <Form.Label htmlFor="toage" className="input-label">
-                                                                Từ
-                                                            </Form.Label>
+                                                            <InputGroup.Text htmlFor="toage" id="basic-addon1">Từ</InputGroup.Text>
                                                             <Form.Control
                                                                 id="toage"
                                                                 type="number"
                                                                 name="toage"
                                                                 onChange={({ target }) => {
-                                                                    handleEmployInput(target.name, target.value);
+                                                                    let value = target.value;
+
+                                                                    // Loại bỏ số 0 ban đầu nếu có
+                                                                    if (value.length > 0 && value[0] === '0') {
+                                                                        value = value.slice(1);
+                                                                    }
+
+                                                                    // Kiểm tra và không cho phép giá trị âm
+                                                                    if (value < 0) {
+                                                                        value = '';
+                                                                    }
+                                                                    handleEmployInput(target.name, value);
                                                                 }}
                                                                 value={formInputEmp.toage}
                                                             />
@@ -740,21 +953,33 @@ function TinNhapPost() {
                                                     </div>
                                                     <div className="create-post-role-radio">
                                                         <InputGroup className="mb-3">
-                                                            <Form.Label htmlFor="fromage" className="input-label">
-                                                                Đến
-                                                            </Form.Label>
+                                                            <InputGroup.Text htmlFor="fromage" id="basic-addon1">Đến</InputGroup.Text>
                                                             <Form.Control
                                                                 id="fromage"
                                                                 type="number"
                                                                 name="fromage"
                                                                 onChange={({ target }) => {
-                                                                    handleEmployInput(target.name, target.value);
+                                                                    let value = target.value;
+
+                                                                    // Loại bỏ số 0 ban đầu nếu có
+                                                                    if (value.length > 0 && value[0] === '0') {
+                                                                        value = value.slice(1);
+                                                                    }
+
+                                                                    // Kiểm tra và không cho phép giá trị âm
+                                                                    if (value < 0) {
+                                                                        value = '';
+                                                                    }
+                                                                    handleEmployInput(target.name, value);
                                                                 }}
                                                                 value={formInputEmp.fromage}
                                                             />
+                                                            {/* {error && <p style={{ color: 'red' }}>{error}*</p>} */}
                                                         </InputGroup>
                                                     </div>
                                                 </div>
+                                                {fieldErrors.fromage && <p style={{ color: 'red' }}>{fieldErrors.fromage}*</p>}
+                                                {fieldErrors.toage && <p style={{ color: 'red' }}>{fieldErrors.toage}</p>}
                                             </div>
                                             <div className="create-post-choose-role">
                                                 <div className="create-post-title">Kinh nghiệm <span>(Để trống nếu không yêu cầu)</span></div>
@@ -781,7 +1006,7 @@ function TinNhapPost() {
                                         </div>
                                     </div>
 
-                                    <div className="create-post-title">Phúc lợi</div>
+                                    <div className="create-post-title">Phúc lợi<img id='require-icon' src={require_icon} alt="" /></div>
                                     <Form.Control
                                         id="create-post-title"
                                         type="text"
@@ -792,6 +1017,8 @@ function TinNhapPost() {
                                         value={formInputEmp.welfare}
                                         placeholder="Ghi chú"
                                     />
+                                    {fieldErrors.welfare && <p style={{ color: 'red' }}>{fieldErrors.welfare}*</p>}
+
                                     <div className="create-post-title">Yêu cầu thêm</div>
                                     <Form.Control
                                         id="create-post-des"
@@ -802,19 +1029,22 @@ function TinNhapPost() {
                                         value={formInputEmp.moredesciption}
                                         placeholder="Mô tả công việc"
                                     />
-                                    <div>
-                                        <Button id="create-post-btn" onClick={handleSubmit} variant="info">Đăng laij</Button>
-                                        <ToastContainer />
-                                    </div>
-                                </div>
+                                    {fieldErrors.moredesciption && <p style={{ color: 'red' }}>{fieldErrors.moredesciption}*</p>}
 
+                                </div>
+                            </div>
+
+                            <div>
+                                <Button style={{ translate: 735 }} id="create-post-btn" onClick={handleUpdateJob} variant="info">Đăng bài</Button>
+                                <Button style={{ translate: 735 }} id="create-post-btn" onClick={handleUpdateJob1} variant="info">Lưu bài</Button>
+                                <ToastContainer />
                             </div>
                         </div>
+
                     </form>
                 )
             })}
         </>
     )
 }
-
 export default TinNhapPost;

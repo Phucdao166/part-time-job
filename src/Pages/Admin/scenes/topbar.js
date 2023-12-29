@@ -5,7 +5,7 @@ import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/Logout";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import '../admin.scss'
@@ -19,6 +19,13 @@ const Topbar = () => {
   const [notify, setNotify] = useState(false);
   const [setting, setSetting] = useState(false);
   const [btnPopup, setBtnPopup] = useState(false)
+  const logout=()=>{
+    sessionStorage.removeItem('id');
+    sessionStorage.removeItem('isAdmin');
+    localStorage.removeItem('token');
+
+    window.location.href = '/login';
+  }
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -43,10 +50,62 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton> */}
-        <IconButton>
+        {/* <IconButton>
           <NotificationsOutlinedIcon onClick={() => setNotify((view) => !view)} />
           {notify &&
             <div className='admin-notify-page'>
+              <div className='admin-notify-hover' onClick={() => setBtnPopup(true)}>
+                <div className='admin-notify-item'>
+                  <div className='admin-notify-user-avt'>
+                    <img src='https://i.pinimg.com/originals/82/d4/92/82d4926dcf09dd4c73eb1a6c0300c135.jpg' />
+                  </div>
+                  <div className='admin-notify-user'>
+                    <div className='admin-notify-user-name'>Phúc Đào</div>
+                    <div className='admin-notify-user-content'>Duyệt bài lẹ không sập web</div>
+                    <div className='admin-notify-user-time'><i class="fa-regular fa-clock"></i> 49 phút trước</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className='admin-notify-hover' onClick={() => setBtnPopup(true)}>
+                <div className='admin-notify-item'>
+                  <div className='admin-notify-user-avt'>
+                    <img src='https://i.pinimg.com/originals/82/d4/92/82d4926dcf09dd4c73eb1a6c0300c135.jpg' />
+                  </div>
+                  <div className='admin-notify-user'>
+                    <div className='admin-notify-user-name'>Phúc Đào</div>
+                    <div className='admin-notify-user-content'>Duyệt bài lẹ không sập web</div>
+                    <div className='admin-notify-user-time'><i class="fa-regular fa-clock"></i> 49 phút trước</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className='admin-notify-hover' onClick={() => setBtnPopup(true)}>
+                <div className='admin-notify-item'>
+                  <div className='admin-notify-user-avt'>
+                    <img src='https://i.pinimg.com/originals/82/d4/92/82d4926dcf09dd4c73eb1a6c0300c135.jpg' />
+                  </div>
+                  <div className='admin-notify-user'>
+                    <div className='admin-notify-user-name'>Phúc Đào</div>
+                    <div className='admin-notify-user-content'>Duyệt bài lẹ không sập web</div>
+                    <div className='admin-notify-user-time'><i class="fa-regular fa-clock"></i> 49 phút trước</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className='admin-notify-hover' onClick={() => setBtnPopup(true)}>
+                <div className='admin-notify-item'>
+                  <div className='admin-notify-user-avt'>
+                    <img src='https://i.pinimg.com/originals/82/d4/92/82d4926dcf09dd4c73eb1a6c0300c135.jpg' />
+                  </div>
+                  <div className='admin-notify-user'>
+                    <div className='admin-notify-user-name'>Phúc Đào</div>
+                    <div className='admin-notify-user-content'>Duyệt bài lẹ không sập web</div>
+                    <div className='admin-notify-user-time'><i class="fa-regular fa-clock"></i> 49 phút trước</div>
+                  </div>
+                </div>
+              </div>
+
               <div className='admin-notify-hover' onClick={() => setBtnPopup(true)}>
                 <div className='admin-notify-item'>
                   <div className='admin-notify-user-avt'>
@@ -87,15 +146,12 @@ const Topbar = () => {
               </div>
             </div>
           </PopupAdmin>
-        </IconButton>
+        </IconButton> */}
         <IconButton>
+
           <SettingsOutlinedIcon onClick={() => setSetting((view) => !view)}/>
           {setting &&
-            <div className='admin-setting'>
-              <div className='admin-setting-hover'>
-                <a href="./login">Đăng xuất</a>
-              </div>
-            </div>
+            <div onClick={logout()}></div>
           }
         </IconButton>
         {/* <IconButton>

@@ -4,18 +4,24 @@ import logo_icon from '../../../Assets/logo-header.png'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Sentcode, CheckForget } from '../../../Service/userService';
+import { Sentcode, CheckForget, ForgetPassword } from '../../../Service/userService';
 function Verify() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
     const [MessageError, setMessageError] = useState('');
+    const [otp, setOtp] = useState('');
+    const [isShowPassword1, setIsShowPassword1] = useState(false);
+    const [isShowPassword2, setIsShowPassword2] = useState(false);
     // Hàm xử lý khi giá trị của ô input thay đổi
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     };
 
+    const handleOtpChange = (e) => {
+        setOtp(e.target.value);
+    };
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
     };
@@ -24,21 +30,38 @@ function Verify() {
         setRepassword(e.target.value);
     };
     const submitHandler = async () => {
+        let res = await Sentcode(email);
+        sessionStorage.setItem('otp', res.message);
+    }
+    const ForgetPasswordHandler = async () => {
         const ForgetPasswordRequest = {
             email: email,
             newPassword: password,
             rePassword: repassword
         };
-        const ForgetPasswordString = JSON.stringify(ForgetPasswordRequest);
-        sessionStorage.setItem('ForgetPasswordRequestData', ForgetPasswordString);
+        // const ForgetPasswordString = JSON.stringify(ForgetPasswordRequest);
+        // sessionStorage.setItem('ForgetPasswordRequestData', ForgetPasswordString);
         let res1 = await CheckForget(ForgetPasswordRequest);
         if (res1.message === "Successfull") {
-            let res = await Sentcode(email);
-            sessionStorage.setItem('otp', res.message);
-            navigate("/otp");
+            if (sessionStorage.getItem('otp') === otp) {
+                // const ForgetString = sessionStorage.getItem('ForgetPasswordRequestData');
+                // const ForgetData = JSON.parse(ForgetString);
+                // console.log(ForgetData);
+                let res = await ForgetPassword(ForgetPasswordRequest);
+                if (res) {
+                    sessionStorage.removeItem('otp');
+                    // sessionStorage.removeItem('ForgetPasswordRequestData');
+                    navigate("/login")
+                } else {
+                    setMessageError("Lỗi chưa chạy server")
+                }
+            } else {
+                setMessageError("Mã Otp không chính xác");
+            }
         } else {
             setMessageError(res1.message);
         }
+
     }
     return (
         <div className="fjob-vn-by-html-to-verify">
@@ -83,11 +106,12 @@ function Verify() {
                                             <div className='form-verify'>
                                                 <div className="heading-s-i-n-tho-verify">Nhập mật khẩu</div>
                                                 <div className='input-verify'>
-                                                    <i class="fa-regular fa-eye" id='icon-verify'></i>
+                                                    <i onClick={() => setIsShowPassword1(!isShowPassword1)} 
+                                                     class="fa-regular fa-eye" id='icon-verify'></i>
                                                     <Form.Control
                                                         id="span-ant-input-affix-verify"
                                                         style={{ padding: '10px' }}
-                                                        type="password" value={password}
+                                                        type={isShowPassword1 === true ? "text" : "password"} value={password}
                                                         onChange={handlePasswordChange}
                                                     />
                                                 </div>
@@ -95,24 +119,25 @@ function Verify() {
                                             <div className='form-verify'>
                                                 <div className="heading-s-i-n-tho-verify">Nhập lại mật khẩu</div>
                                                 <div className='input-verify'>
-                                                    <i class="fa-regular fa-eye" id='icon-verify'></i>
+                                                    <i onClick={() => setIsShowPassword2(!isShowPassword2)} 
+                                                    class="fa-regular fa-eye" id='icon-verify'></i>
                                                     <Form.Control
                                                         id="span-ant-input-affix-verify"
                                                         style={{ padding: '10px' }}
-                                                        type="password" value={repassword}
+                                                        type={isShowPassword2 === true ? "text" : "password"} value={repassword}
                                                         onChange={handleRepasswordChange}
                                                     />
                                                 </div>
                                             </div>
                                             <div className='form-verify'>
                                                 <div className="heading-s-i-n-tho-verify">Xác nhận OTP</div>
-                                                <div style={{display: 'flex'}}>
+                                                <div style={{ display: 'flex' }}>
                                                     <div className='input-verify-otp'>
                                                         <Form.Control
                                                             id="span-ant-input-affix-verify"
                                                             style={{ padding: '10px' }}
-                                                            type="password" value={repassword}
-                                                            onChange={handleRepasswordChange}
+                                                            type="text" value={otp}
+                                                            onChange={handleOtpChange}
                                                         />
                                                     </div>
                                                     <div><Button onClick={submitHandler} style={{ width: '90px', marginLeft: '30px' }} variant="success">Gửi OTP</Button></div>
@@ -132,7 +157,7 @@ function Verify() {
                                             </div>
 
 
-                                            <Button style={{ top: '415px' }} onClick={submitHandler} id="button-verify" variant="success">Tiếp tục</Button>{' '}
+                                            <Button style={{ top: '415px' }} onClick={ForgetPasswordHandler} id="button-verify" variant="success">Xác nhận</Button>{' '}
                                         </div>
                                     </div>
                                 </div>
